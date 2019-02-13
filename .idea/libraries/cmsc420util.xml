@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="cmsc420util">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/cmsc420util.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/src/cmsc420util.jar!/doc" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/src/cmsc420util.jar!/" />
+    </SOURCES>
+  </library>
+</component>
