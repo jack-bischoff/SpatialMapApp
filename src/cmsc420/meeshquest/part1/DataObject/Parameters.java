@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part1;
+package cmsc420.meeshquest.part1.DataObject;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 public class Parameters {
     private LinkedHashMap<String, String> params = null;
 
-    Parameters(NamedNodeMap attributes, String[] ordering) {
+    public Parameters(NamedNodeMap attributes, String[] ordering) {
         if (attributes != null) {
             this.params = new LinkedHashMap<>();
             for (String param : ordering) {

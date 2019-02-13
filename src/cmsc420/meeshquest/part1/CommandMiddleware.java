@@ -1,19 +1,20 @@
 package cmsc420.meeshquest.part1;
-import cmsc420.xml.XmlUtility;
+import cmsc420.meeshquest.part1.DataObject.City;
+import cmsc420.meeshquest.part1.DataObject.Parameters;
+import cmsc420.meeshquest.part1.DataObject.Result;
+import cmsc420.meeshquest.part1.Databases.CityDictionary;
+import cmsc420.meeshquest.part1.Errors.Failure;
 import org.w3c.dom.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-//Middleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
+//CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
 //TODO: Extend Result object to handle output, naming...
 //TODO: Consider refactoring params into Parameter Object with paramsOrdering field.
-public class Middleware {
+public class CommandMiddleware {
     private Document builder;
-    private CitiesLookup cities;
-    Middleware(Document builder) {
+    private CityDictionary citiesLookup;
+    CommandMiddleware(Document builder) {
         this.builder = builder;
-        this.cities = new CitiesLookup();
+        this.citiesLookup = new CityDictionary();
     }
 
     private Element buildXml(Result res, String command, Parameters params, Element Output) {
@@ -35,7 +36,7 @@ public class Middleware {
     }
 
 
-    public Element createCity(Parameters params) {
+    public Element createCity(Parameters params) throws Failure {
         String
                 name = params.get("name"),
                 color = params.get("color");
@@ -44,14 +45,14 @@ public class Middleware {
                 y = Integer.parseInt(params.get("y")),
                 radius = Integer.parseInt(params.get("radius"));
 
-        Result res = cities.createCity(name, x, y, radius, color);
-        return buildXml(res, "createCity", params, builder.createElement("output"));
+        citiesLookup.create(name, x, y, radius, color);
+        return emptyOutput();
     }
 
 
     public Element listCities(Parameters params) {
         String sortBy = params.get("sortBy");
-        Result res = cities.listCities(sortBy);
+        Result res = citiesLookup.list(sortBy);
         Element Output = builder.createElement("output");
         Element CityList = builder.createElement("cityList");
         if (res.payload != null) {
@@ -67,11 +68,16 @@ public class Middleware {
             }
         }
         Output.appendChild(CityList);
-        return buildXml(res, "listCities", params, Output);
+        return buildXml(res, "list", params, Output);
     }
 
     public Element clearAll(Parameters params) {
-        Result res = cities.clearAll();
+        Result res = citiesLookup.clearAll();
         return buildXml(res, "clearAll", params, builder.createElement("output"));
+    }
+
+    public Element deleteCity(Parameters params) {
+        String name = params.get("name");
+
     }
 }

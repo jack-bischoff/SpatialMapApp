@@ -1,38 +1,44 @@
-package cmsc420.meeshquest.part1;
+package cmsc420.meeshquest.part1.Databases;
 
-import cmsc420.xml.XmlUtility;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import cmsc420.meeshquest.part1.DataObject.City;
+import cmsc420.meeshquest.part1.CoordinateComparator;
+import cmsc420.meeshquest.part1.DataObject.Result;
+import cmsc420.meeshquest.part1.Errors.DuplicateCityCoordinatesFailure;
+import cmsc420.meeshquest.part1.Errors.DuplicateCityNameFailure;
+import cmsc420.meeshquest.part1.Errors.Failure;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeMap;
 
-public class CitiesLookup {
+public class CityDictionary {
     private TreeMap<String, City> mapByName;
     private TreeMap<Point2D.Float, City> mapByCoords;
 
-    CitiesLookup() {
+    public CityDictionary() {
         this.mapByName = new TreeMap<>();
-        this.mapByCoords = new TreeMap<>(new CoordSort());
+        this.mapByCoords = new TreeMap<>(new CoordinateComparator());
     }
 
-    public Result createCity(String name, int x, int y, int radius, String color) {
+    public void create(String name, int x, int y, int radius, String color) throws Failure {
         Point2D.Float coord = new Point2D.Float(x, y);
 
-        if (mapByCoords.containsKey(coord)) return new Result(null, "duplicateCityCoordinates");
-        if (mapByName.containsKey(name)) return new Result(null, "duplicateCityName");
+        if (mapByCoords.containsKey(coord)) throw new DuplicateCityCoordinatesFailure();
+        if (mapByName.containsKey(name)) throw new DuplicateCityNameFailure();
         //success
         City newCity = new City(name, x, y, radius, color);
         mapByCoords.put(coord, newCity);
         mapByName.put(name, newCity);
+    }
 
-        return new Result();
+    public Result delete(String name) {
+        if (this.mapByName.containsKey("name")) {
+            if
+        }
     }
 
 
-    public Result listCities(String sortBy) {
+    public Result list(String sortBy) {
         if (this.mapByName.size() < 1) return new Result(null, "noCitiesToList");
         ArrayList<City> citiesList = new ArrayList<>();
         if (sortBy.equals("name")) {
@@ -49,7 +55,7 @@ public class CitiesLookup {
 
     public Result clearAll() {
         this.mapByName = new TreeMap<>();
-        this.mapByCoords = new TreeMap<>(new CoordSort());
+        this.mapByCoords = new TreeMap<>(new CoordinateComparator());
         return new Result();
     }
 }
