@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import cmsc420.meeshquest.part1.DataObject.Parameters;
+import cmsc420.meeshquest.part1.DataObject.Result;
 import cmsc420.meeshquest.part1.Errors.Failure;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -31,37 +32,37 @@ public class MeeshQuest {
         			String commandName = commandNode.getNodeName();
 					NamedNodeMap attrs = commandNode.getAttributes();
 					Parameters params = null;
-					Element Status, Output = null, Command = results.createElement("command");
+                    Result Output;
+					Element Status, Command = results.createElement("command");
 					Command.setAttribute("name", commandName);
 
-					try {
-						switch (commandName) {
-							case "createCity":
-								params = new Parameters(attrs, new String[]{"name", "x", "y", "radius", "color"});
-								Output = mw.createCity(params);
-								break;
-							case "listCities":
-								params = new Parameters(attrs, new String[]{"sortBy"});
-								Output = mw.listCities(params);
-								break;
-							case "clearAll":
-								params = new Parameters(null, null);
-								Output = mw.clearAll(params);
-								break;
-							default:
-								Output = results.createElement("undefinedError");
-						}
+                    switch (commandName) {
+                        case "createCity":
+                            params = new Parameters(attrs, new String[]{"name", "x", "y", "radius", "color"});
+                            Output = mw.createCity(params);
+                            break;
+                        case "deleteCity":
+                            params = new Parameters(attrs, new String[]{"name"});
+                            Output = mw.deleteCity(params);
+                            break;
+                        case "listCities":
+                            params = new Parameters(attrs, new String[]{"sortBy"});
+                            Output = mw.listCities(params);
+                            break;
+                        case "clearAll":
+                            params = new Parameters();
+                            Output = mw.clearAll();
+                            break;
+                        default:
+                            params = new Parameters();
+                            Output = new Result(results.createElement("undefinedError"));
+                    }
+                    Status = Output.toXml();
+                    Output.prepend(Command);
+                    Output.prepend(params.toXml());
 
-						Status = results.createElement("success");
-					} catch (Failure f) {
-						Status = results.createElement("error");
-						Status.setAttribute("type", f.err);
-					} finally {
-						Status.appendChild(Command);
-						Status.appendChild(params.toXml(results));
-						Status.appendChild(Output);
-						Root.appendChild(Status);
-					}
+                    Root.appendChild(Status);
+
 
         		}
 

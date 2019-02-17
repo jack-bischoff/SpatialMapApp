@@ -1,5 +1,6 @@
 package cmsc420.meeshquest.part1.DataObject;
 
+import cmsc420.meeshquest.part1.Xmlable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -8,9 +9,12 @@ import org.w3c.dom.Node;
 
 import java.util.LinkedHashMap;
 
-public class Parameters {
-    private LinkedHashMap<String, String> params = null;
+public class Parameters implements Xmlable {
+    private LinkedHashMap<String, String> params;
 
+    public Parameters() {
+        this.params = null;
+    }
     public Parameters(NamedNodeMap attributes, String[] ordering) {
         if (attributes != null) {
             this.params = new LinkedHashMap<>();
@@ -26,7 +30,8 @@ public class Parameters {
         return params.get(name);
     }
 
-    public Element toXml(Document builder) {
+    public Element toXml() {
+        Document builder = getBuilder();
         Element Parameters = builder.createElement("parameters");
         if (params != null) {
             for (String paramName : params.keySet()) {

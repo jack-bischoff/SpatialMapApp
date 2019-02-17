@@ -1,8 +1,11 @@
 package cmsc420.meeshquest.part1.DataObject;
 
+import cmsc420.meeshquest.part1.Xmlable;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import java.awt.geom.Point2D;
 
-public class City extends Point2D.Float {
+public class City extends Point2D.Float implements Xmlable {
     private int radius;
     private String color, name;
 
@@ -25,5 +28,15 @@ public class City extends Point2D.Float {
         return this.color;
     }
 
-
+    public Element toXml() {
+        String[] names = {"name", "x", "y", "radius", "color"};
+        String[] values =
+                {getName(), Integer.toString((int)getX()), Integer.toString((int)getY()), Integer.toString(getRadius()), getColor()};
+        Document builder = getBuilder();
+        Element city = builder.createElement("city");
+        for (int i = 0; i < names.length; i++) {
+            city.setAttribute(names[i], values[i]);
+        }
+        return city;
+    }
 }
