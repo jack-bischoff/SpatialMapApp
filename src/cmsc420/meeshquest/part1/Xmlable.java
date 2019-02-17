@@ -5,7 +5,7 @@ import cmsc420.xml.XmlUtility;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-public interface xmlify {
+public interface Xmlable {
     default Document getBuilder() {
         Document builder;
         try {
@@ -16,6 +16,6 @@ public interface xmlify {
         }
         return builder;
     }
-   Element toXml();
+    public Element toXml();
 
 }
