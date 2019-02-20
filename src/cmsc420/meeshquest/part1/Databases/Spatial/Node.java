@@ -1,11 +1,13 @@
 package cmsc420.meeshquest.part1.Databases.Spatial;
 
+import java.awt.geom.Point2D;
+
 public class Node{
-    Node NE, NW, SE, SW;
-    Node() {
-        NE = null;
-        NW = null;
-        SE = null;
-        SW = null;
+    Node[] quadrants = new Node[]{null, null, null, null}; //Array indices correspond to quadrants in a cartesian plane.
+    Point2D.Float origin, end;
+    Node(int width, int height) {
+
     }
+
+
 }

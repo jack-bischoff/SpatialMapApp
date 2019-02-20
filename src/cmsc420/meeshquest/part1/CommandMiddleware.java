@@ -13,10 +13,10 @@ public class CommandMiddleware {
     private CitySpatialMap spatialMap;
     private Document builder;
 
-    CommandMiddleware(Document builder) {
+    CommandMiddleware(Document builder, int width, int height) {
         this.builder = builder;
         this.cityDictionary = new CityDictionary();
-        this.spatialMap = new CitySpatialMap();
+        this.spatialMap = new CitySpatialMap(width, height);
     }
 
     public Result createCity(Parameters params)  {

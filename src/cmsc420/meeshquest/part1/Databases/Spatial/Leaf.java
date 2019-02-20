@@ -1,9 +1,15 @@
 package cmsc420.meeshquest.part1.Databases.Spatial;
 
-public class Leaf<T> extends Node {
-    T data;
-    Leaf(T city) {
-        super();
-        this.data = city;
+import cmsc420.meeshquest.part1.DataObject.City;
+
+public class Leaf extends prQuadTree {
+    City city;
+    Leaf(City city) {
+        super()
+        this.city = city;
+    }
+
+    public void insert() {
+
     }
 }
