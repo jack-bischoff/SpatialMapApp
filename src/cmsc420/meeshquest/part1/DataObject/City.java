@@ -28,6 +28,7 @@ public class City extends Point2D.Float implements Xmlable {
         return this.color;
     }
 
+
     public Element toXml() {
         String[] names = {"name", "x", "y", "radius", "color"};
         String[] values =
