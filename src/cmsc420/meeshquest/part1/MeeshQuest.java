@@ -7,7 +7,6 @@ import javax.xml.transform.TransformerException;
 
 import cmsc420.meeshquest.part1.DataObject.Parameters;
 import cmsc420.meeshquest.part1.DataObject.Result;
-import cmsc420.meeshquest.part1.Errors.Failure;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -21,9 +20,12 @@ public class MeeshQuest {
         try {
         	Document doc = XmlUtility.validateNoNamespace(System.in);
         	results = XmlUtility.getDocumentBuilder().newDocument();
-        	mw = new CommandMiddleware(results);
+
         	Element Root = results.createElement("results");
         	Element commandNode = doc.getDocumentElement();
+            int spatialWidth = Integer.parseInt(commandNode.getAttribute("spatialWidth")),
+                    spatialHeight = Integer.parseInt(commandNode.getAttribute("spatialHeight"));
+            mw = new CommandMiddleware(results, spatialWidth, spatialHeight);
 
         	final NodeList nl = commandNode.getChildNodes();
         	for (int i = 0; i < nl.getLength(); i++) {
@@ -53,17 +55,23 @@ public class MeeshQuest {
                             params = new Parameters();
                             Output = mw.clearAll();
                             break;
+                        case "mapCity":
+                            params = new Parameters(attrs, new String[]{"name"});
+                            Output = mw.mapCity(params);
+                            break;
+                        case "unmapCity":
+                            params = new Parameters(attrs, new String[]{"name"});
+                            Output = mw.unmapCity(params);
+                            break;
                         default:
                             params = new Parameters();
                             Output = new Result(results.createElement("undefinedError"));
                     }
+
                     Status = Output.toXml();
-                    Output.prepend(Command);
-                    Output.prepend(params.toXml());
-
+                    Status.insertBefore(params.toXml(), Status.getFirstChild());
+                    Status.insertBefore(Command, Status.getFirstChild());
                     Root.appendChild(Status);
-
-
         		}
 
         	}

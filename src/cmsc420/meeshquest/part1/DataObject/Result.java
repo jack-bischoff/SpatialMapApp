@@ -5,19 +5,16 @@ import org.w3c.dom.Element;
 public class Result implements Xmlable {
     Element xmlOutput;
 
-    public Result(Element output) {
-        this.xmlOutput = output;
-    }
     public Result() {
+        this(null);
+    }
+
+    public Result(Element output) {
         this.xmlOutput = getBuilder().createElement("output");
+        this.xmlOutput.appendChild(output);
     }
 
     public Element toXml() {
         return xmlOutput;
     }
-
-    public Element prepend(Element newChild) {
-
-    }
-
 }

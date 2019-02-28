@@ -7,7 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public interface Xmlable {
     default Document getBuilder() {
-        Document builder;
+        Document builder = null;
         try {
             builder = XmlUtility.getDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
@@ -16,6 +16,5 @@ public interface Xmlable {
         }
         return builder;
     }
-    public Element toXml();
-
+    Element toXml();
 }

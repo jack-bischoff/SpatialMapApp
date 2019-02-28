@@ -23,11 +23,15 @@ public class CityDictionary {
         return mapByName.get(name);
     }
 
+    public boolean contains(String name) { return get(name) != null; }
+
     public Response create(String name, int x, int y, int radius, String color) {
         Point2D.Float coord = new Point2D.Float(x, y);
 
-        if (mapByCoords.containsKey(coord)) return new Response("error", "duplicateCityCoordinates");
-        if (mapByName.containsKey(name)) return new Response("error", "duplicateCityName");
+        if (mapByCoords.containsKey(coord))
+            return new Response("error", "duplicateCityCoordinates");
+        if (mapByName.containsKey(name))
+            return new Response("error", "duplicateCityName");
         //success
         City newCity = new City(name, x, y, radius, color);
         mapByCoords.put(coord, newCity);
@@ -36,9 +40,12 @@ public class CityDictionary {
     }
 
     public Response delete(String name) {
-        if (this.mapByName.containsKey("name")) {
+        if (!mapByName.containsKey(name))
+            return new Response("error", "cityDoesNotExist");
 
-        }
+        mapByCoords.remove(mapByName.get(name).getLocation());
+        mapByName.remove(name);
+        return new Response("success", null);
     }
 
 

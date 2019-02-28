@@ -19,7 +19,7 @@ public class CommandMiddleware {
         this.spatialMap = new CitySpatialMap(width, height);
     }
 
-    public Result createCity(Parameters params)  {
+    Result createCity(Parameters params)  {
         String
                 name = params.get("name"),
                 color = params.get("color");
@@ -35,7 +35,7 @@ public class CommandMiddleware {
     }
 
 
-    public Result listCities(Parameters params) {
+    Result listCities(Parameters params) {
         String sortBy = params.get("sortBy");
         Response res = cityDictionary.list(sortBy);
 
@@ -50,36 +50,73 @@ public class CommandMiddleware {
         return new Success(cityList);
     }
 
-    public Result clearAll() {
+    Result clearAll() {
         cityDictionary.clearAll();
         return new Success();
     }
 
-    public Result deleteCity(Parameters params) {
+    Result deleteCity(Parameters params) {
         String name = params.get("name");
         Response res;
+        Element output = null;
+
+        if (!cityDictionary.contains(name))
+            return new Failure("cityDoesNotExist");
+
+        City toDelete = cityDictionary.get(name);
+        if (spatialMap.contains(toDelete)) {
+            spatialMap.unmapCity(toDelete);
+            output = toDelete.toXml();
+            builder.renameNode(output,"","cityUnmapped");
+        }
 
         res = cityDictionary.delete(name);
         if (res.status.equals("error"))
             return new Failure((String) res.payload);
-        res = spatialMap.unmapCity(name);
-        if (res.payload != null) {
-            Element city = ((City)res.payload).toXml();
-            builder.renameNode(city,"","cityUnmapped");
-            return new Success(city);
-        }
 
-        return new Success();
+        return new Success(output);
     }
 
-    public Result mapCity(Parameters params) {
+    Result mapCity(Parameters params) {
         String name = params.get("name");
         City city = cityDictionary.get(name);
+
         if (city == null)
             return new Failure("nameNotInDictionary");
+
         Response res = spatialMap.mapCity(city);
         if (res.status.equals("error"))
             return new Failure((String) res.payload);
         return new Success();
+    }
+
+    Result unmapCity(Parameters params) {
+        String name = params.get("name");
+        City city = cityDictionary.get(name);
+
+        if (city == null)
+            return new Failure("nameNotInDictionary");
+
+        Response res = spatialMap.unmapCity(city);
+        if (res.status.equals("error"))
+            return new Failure((String) res.payload);
+
+        return new Success();
+    }
+
+    Result saveMap(Parameters params) {
+        String name = params.get("name");
+
+        //do stuff
+        return new Success();
+    }
+    Result printPRQuadTree() {
+        Response res = spatialMap.printPRQuadTree();
+        if (res.status.equals("error"))
+            return new Failure((String)res.payload);
+
+        Element tree = builder.createElement("quadtree");
+        tree.appendChild((Element)res.payload);
+        return new Success(tree);
     }
 }

@@ -5,14 +5,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Failure extends Result implements Xmlable {
-    public Failure(String msg) {
-       super(msg);
-    }
+    private String msg;
+    public Failure(String msg) {}
 
     public Element toXml() {
         Document builder = getBuilder();
         Element root = builder.createElement("error");
-        root.setAttribute("type", (String) payload);
+        root.setAttribute("type", msg);
         return root;
     }
 

@@ -28,6 +28,7 @@ public class City extends Point2D.Float implements Xmlable {
         return this.color;
     }
 
+    public Point2D.Float getLocation() { return new Point2D.Float((float)getX(), (float)getY());}
 
     public Element toXml() {
         String[] names = {"name", "x", "y", "radius", "color"};
