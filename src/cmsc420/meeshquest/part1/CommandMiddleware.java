@@ -5,6 +5,8 @@ import cmsc420.meeshquest.part1.Databases.CityDictionary;
 import cmsc420.meeshquest.part1.Databases.CitySpatialMap;
 import org.w3c.dom.*;
 
+import java.awt.geom.Point2D;
+
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
 //TODO: Extend Response object to handle output, naming...
 //TODO: Consider refactoring params into Parameter Object with paramsOrdering field.
@@ -113,10 +115,34 @@ public class CommandMiddleware {
     Result printPRQuadTree() {
         Response res = spatialMap.printPRQuadTree();
         if (res.status.equals("error"))
-            return new Failure((String)res.payload);
+            return new Failure(res.payload.toString());
 
         Element tree = builder.createElement("quadtree");
         tree.appendChild((Element)res.payload);
         return new Success(tree);
+    }
+    Result nearestCity(Parameters params) {
+       Point2D.Float point = null; // = params.get("point");
+        Response res = spatialMap.nearestCity(point);
+        if (res.status.equals("error"))
+            return new Failure(res.payload.toString());
+        return new Success(((City)res.payload).toXml());
+    }
+
+    Result rangeCities(Parameters params) {
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("y"));
+        int radius = Integer.parseInt(params.get("radius"));
+        //Do something with optional saveMap
+        Response res = spatialMap.rangeCities(x, y, radius);
+        if (res.status.equals("error"))
+            return new Failure(res.payload.toString());
+
+        City[] citiesInRange = (City[])res.payload;
+        Element cityList = builder.createElement("cityList");
+        for (City city : citiesInRange) {
+            cityList.appendChild(city.toXml());
+        }
+        return new Success(cityList);
     }
 }

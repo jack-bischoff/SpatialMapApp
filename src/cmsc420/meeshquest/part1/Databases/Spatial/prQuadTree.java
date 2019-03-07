@@ -6,10 +6,27 @@ import org.w3c.dom.Element;
 import sun.invoke.empty.Empty;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class prQuadTree implements Xmlable {
     private prQuadTree[] quads; //Array indices correspond to quadrants in a cartesian plane.
     private int xBound, yBound,size;
+    class distCompare implements Comparator<prQuadTree> {
+        Point2D.Float point;
+        public distCompare(Point2D.Float point) {
+            this.point = point;
+        }
+        public int compare(prQuadTree t1, prQuadTree t2) {
+            double dist1 = t1.dist(point);
+            double dist2 = t2.dist(point);
+            if (dist1 < dist2) return -1;
+            else if (dist1 > dist2) return 1;
+//                else return c1.getName().compareTo(c2.getName());
+            return 0;
+        }
+    }
 
     prQuadTree() {}
     public prQuadTree(Point2D.Float middle, int size) {
@@ -50,6 +67,29 @@ public class prQuadTree implements Xmlable {
             return new EmptyLeaf(new Point2D.Float(xBound, yBound), this.size);
         }
         return this;
+    }
+
+    public double dist(Point2D.Float point) {
+            return point.distance(new Point2D.Double(xBound, yBound));
+    }
+
+    public City nearest(Point2D.Float nearestTo) {
+
+        PriorityQueue<prQuadTree> Q = new PriorityQueue<>(new distCompare(nearestTo));
+        Q.add(this);
+        while (!Q.isEmpty()) {
+            prQuadTree ele = Q.poll();
+            if (!(ele instanceof Leaf)) {
+                for (prQuadTree Quad : ele.quads) Q.add(Quad);
+            } else if (!(ele instanceof EmptyLeaf)) {
+                return ((Leaf)ele).city;
+            }
+        }
+        return null;
+    }
+
+    public City[] range(Point2D.Float from, int radius) {
+
     }
 
     public Element toXml() {

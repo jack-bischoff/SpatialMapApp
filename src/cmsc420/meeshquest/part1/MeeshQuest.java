@@ -33,7 +33,7 @@ public class MeeshQuest {
         			commandNode = (Element) nl.item(i);
         			String commandName = commandNode.getNodeName();
 					NamedNodeMap attrs = commandNode.getAttributes();
-					Parameters params = null;
+					Parameters params = new Parameters();
                     Result Output;
 					Element Status, Command = results.createElement("command");
 					Command.setAttribute("name", commandName);
@@ -52,7 +52,6 @@ public class MeeshQuest {
                             Output = mw.listCities(params);
                             break;
                         case "clearAll":
-                            params = new Parameters();
                             Output = mw.clearAll();
                             break;
                         case "mapCity":
@@ -63,8 +62,19 @@ public class MeeshQuest {
                             params = new Parameters(attrs, new String[]{"name"});
                             Output = mw.unmapCity(params);
                             break;
+                        case "saveMap":
+                            Output = mw.saveMap(params);
+                            break;
+                        case "rangeCities":
+                            //figure out optional param saveMap
+                            params = new Parameters(attrs, new String[]{"x", "y", "radius"});
+                            Output = mw.rangeCities(params);
+                            break;
+                        case "nearestCity":
+                            params = new Parameters(attrs, new String[]{"x", "y"});
+                            Output = mw.nearestCity(params);
+                            break;
                         default:
-                            params = new Parameters();
                             Output = new Result(results.createElement("undefinedError"));
                     }
 

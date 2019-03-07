@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 import java.awt.geom.Point2D;
 
 public class Leaf extends prQuadTree implements Xmlable {
-    private City city;
+    City city;
     Point2D.Float nextMiddle;
     int sizeFromMiddle;
 
@@ -26,6 +26,10 @@ public class Leaf extends prQuadTree implements Xmlable {
 
     public EmptyLeaf delete(City toDelete) {
         return new EmptyLeaf(nextMiddle, sizeFromMiddle);
+    }
+
+    public double dist(Point2D.Float point) {
+        return point.distance(city.getX(), city.getY());
     }
 
     public boolean contains(City city) {
