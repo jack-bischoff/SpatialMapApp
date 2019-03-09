@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part1.Databases.Spatial;
+package cmsc420.meeshquest.part1.Structures.Spatial;
 
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.Xmlable;
@@ -6,17 +6,18 @@ import org.w3c.dom.Element;
 
 import java.awt.geom.Point2D;
 
-public class EmptyLeaf extends Leaf implements Xmlable {
+public class EmptyLeaf extends Leaf {
+    private static EmptyLeaf instance = new EmptyLeaf();
 
-    EmptyLeaf(Point2D.Float nextMiddle, int sizeFromMiddle) {
-        super(null, nextMiddle, sizeFromMiddle);
+    private EmptyLeaf() {
+        super(null);
     }
 
-    public Leaf insert(City city) {
-        return new Leaf(city, nextMiddle, sizeFromMiddle);
+    static EmptyLeaf EmptyLeaf() {
+        return instance;
     }
 
-    public boolean contains(City city) {
+    boolean contains(City city) {
         return false;
     }
 

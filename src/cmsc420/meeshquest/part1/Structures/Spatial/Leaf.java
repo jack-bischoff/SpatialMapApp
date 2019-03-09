@@ -1,38 +1,23 @@
-package cmsc420.meeshquest.part1.Databases.Spatial;
+package cmsc420.meeshquest.part1.Structures.Spatial;
 
 import cmsc420.meeshquest.part1.DataObject.City;
-
-import cmsc420.meeshquest.part1.Xmlable;
 import org.w3c.dom.Element;
-
 import java.awt.geom.Point2D;
 
-public class Leaf extends prQuadTree implements Xmlable {
+class Leaf extends Node {
     City city;
-    Point2D.Float nextMiddle;
-    int sizeFromMiddle;
 
-    Leaf(City city, Point2D.Float nextMiddle, int sizeFromMiddle) {
-        this.nextMiddle = nextMiddle;
-        this.sizeFromMiddle = sizeFromMiddle;
+    Leaf(City city) {
         this.city = city;
     }
 
-    public prQuadTree insert(City newCity) {
-        prQuadTree newQuad = new prQuadTree(nextMiddle, sizeFromMiddle);
-        newQuad = newQuad.insert(this.city);
-        return newQuad.insert(newCity);
-    }
-
-    public EmptyLeaf delete(City toDelete) {
-        return new EmptyLeaf(nextMiddle, sizeFromMiddle);
-    }
-
-    public double dist(Point2D.Float point) {
+    double dist(Point2D.Float point) {
         return point.distance(city.getLocation());
     }
 
-    public boolean contains(City city) {
+    int findQuad(City city) { return -1; }
+
+    boolean contains(City city) {
         return city.getName().equals(this.city.getName());
     }
 

@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part1.Databases.Spatial;
+package cmsc420.meeshquest.part1.Structures.Spatial;
 
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.Xmlable;
@@ -12,16 +12,17 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class prQuadTree implements Xmlable {
-    private prQuadTree[] quads; //Array indices correspond to quadrants in a cartesian plane.
-    private int xBound, yBound,size;
-    class distCompare implements Comparator<prQuadTree> {
+
+    private Node root = EmptyLeaf.EmptyLeaf();
+
+    class distCompare implements Comparator<Node> {
         Point2D.Float point;
         public distCompare(Point2D.Float point) {
             this.point = point;
         }
-        public int compare(prQuadTree t1, prQuadTree t2) {
-            double dist1 = t1.dist(point);
-            double dist2 = t2.dist(point);
+        public int compare(Node n1, Node n2) {
+            double dist1 = n1.dist(point);
+            double dist2 = n2.dist(point);
             if (dist1 < dist2) return -1;
             else if (dist1 > dist2) return 1;
 //                else return c1.getName().compareTo(c2.getName());
@@ -30,58 +31,95 @@ public class prQuadTree implements Xmlable {
     }
 
     prQuadTree() {}
-    public prQuadTree(Point2D.Float middle, int size) {
-        float x = (float) middle.getX();
-        float y = (float) middle.getY();
-        int ds = size / 2;
-
+    public prQuadTree(int width, int height, int size) {
+        int x = width;
+        this.y = height;
         this.size = size;
-        this.xBound = (int)x;
-        this.yBound = (int)y;
+        int ds = size / 2;
+//
+//        //In clockwise order:
+//        quads = new prQuadTree[]{
+//                new EmptyLeaf(new Point2D.Float(x - ds, y + ds), ds), //NW
+//                new EmptyLeaf(new Point2D.Float(x + ds, y + ds), ds), //NE
+//                new EmptyLeaf(new Point2D.Float(x + ds, y - ds), ds), //SE
+//                new EmptyLeaf(new Point2D.Float(x - ds, y - ds), ds)  //SW
+//        };
+    }
+    private int[] calcBounds(Node parent, int intoThisQuad) {
+        int[] nextMiddle = null;
+        int x = parent.xBound, y = parent.yBound, ds = parent.size / 2;
 
-        //In clockwise order:
-        quads = new prQuadTree[]{
-                new EmptyLeaf(new Point2D.Float(x - ds, y + ds), ds), //NW
-                new EmptyLeaf(new Point2D.Float(x + ds, y + ds), ds), //NE
-                new EmptyLeaf(new Point2D.Float(x + ds, y - ds), ds), //SE
-                new EmptyLeaf(new Point2D.Float(x - ds, y - ds), ds)  //SW
-        };
+        if (intoThisQuad == 0)       nextMiddle = new int[]{x - ds, y + ds}; //NW
+        else if (intoThisQuad == 1)  nextMiddle = new int[]{x + ds, y + ds}; //NE
+        else if (intoThisQuad == 2)  nextMiddle = new int[]{x + ds, y - ds}; //SE
+        else if (intoThisQuad == 3)  nextMiddle = new int[]{x - ds, y - ds}; //SW
+
+        return nextMiddle;
     }
 
-    public prQuadTree insert(City city) {
-        int xCoord = (int) city.getX(), yCoord = (int) city.getY(), quad;
-        quad = findQuad(xCoord, yCoord);
-        quads[quad] = quads[quad].insert(city);
-        return this;
-    }
-
-    public prQuadTree delete(City city) {
-        int quad = findQuad((int)city.getX(), (int)city.getY());
-        quads[quad] = quads[quad].delete(city);
-        //suboptimal cleanup in all sense of the word
-        if (
-            quads[0] instanceof EmptyLeaf &&
-            quads[1] instanceof EmptyLeaf &&
-            quads[2] instanceof EmptyLeaf &&
-            quads[3] instanceof EmptyLeaf
-        ) {
-            return new EmptyLeaf(new Point2D.Float(xBound, yBound), this.size);
+    public void insert(City city) {
+        int nextQuad = 0;
+        Node curr = root, prev = null;
+        while (!(curr instanceof Leaf)) {
+            nextQuad = curr.findQuad(city);
+            prev = curr;
+            curr = curr.quads[nextQuad];
         }
-        return this;
+
+        if (curr instanceof EmptyLeaf) {
+            //EmptyLeaf can be replaced by a Leaf
+            //Special case for head
+            if (prev == null) root = new Leaf(city);
+            else prev.quads[nextQuad] = new Leaf(city);
+        } else {
+            //Decomposition of Leaf into more quadrants
+            Leaf temp = (Leaf)curr;
+            int[] middlePt;
+            curr = prev;
+            while (nextQuad == curr.findQuad(temp.city)) {
+                middlePt = calcBounds(curr, nextQuad);
+                Node n = new Internal(middlePt[0], middlePt[1],curr.size / 2);
+                curr.quads[nextQuad] = n;
+                curr = n;
+                nextQuad = curr.findQuad(city);
+            }
+            curr.quads[nextQuad] = new Leaf(city);
+            curr.quads[curr.findQuad(temp.city)] = new Leaf(temp.city);
+        }
     }
 
-    public double dist(Point2D.Float point) {
-            return point.distance(new Point2D.Double(xBound, yBound));
+    public boolean delete(City city) {
+        Node curr = root, prev = null;
+        int nextQuad = 0;
+        while (!(curr instanceof Leaf)){
+            nextQuad = curr.findQuad(city);
+            prev = curr;
+            curr = curr.quads[nextQuad];
+        }
+        if (((Leaf) curr).contains(city)) {
+            if (prev == null) {
+                root = EmptyLeaf.EmptyLeaf();
+            }
+            else{
+                prev.quads[nextQuad] = EmptyLeaf.EmptyLeaf();
+                int nonEmpty = 4;
+                for (Node child : prev.quads) {
+                    if (child instanceof EmptyLeaf) nonEmpty--;
+                }
+
+            }
+        } else return false;
+
+        return true;
     }
 
     public City nearest(Point2D.Float nearestTo) {
-
-        PriorityQueue<prQuadTree> Q = new PriorityQueue<>(new distCompare(nearestTo));
-        Q.add(this);
+        PriorityQueue<Node> Q = new PriorityQueue<>(new distCompare(nearestTo));
+        Q.add(root);
         while (!Q.isEmpty()) {
-            prQuadTree ele = Q.poll();
+            Node ele = Q.poll();
             if (!(ele instanceof Leaf)) {
-                for (prQuadTree Quad : ele.quads) Q.add(Quad);
+                for (Node Quad : ele.quads) Q.add(Quad);
             } else if (!(ele instanceof EmptyLeaf)) {
                 return ((Leaf)ele).city;
             }
@@ -94,17 +132,17 @@ public class prQuadTree implements Xmlable {
         Ellipse2D.Float searchCircle =
                 new Ellipse2D.Float( ((int)from.getX() + radius), ((int)from.getY() + radius), radius, radius );
 
-        PriorityQueue<prQuadTree> Q = new PriorityQueue<>();
-        Q.add(this);
+        PriorityQueue<Node> Q = new PriorityQueue<>();
+        Q.add(root);
         while (!Q.isEmpty()) {
-            prQuadTree ele = Q.poll();
+            Node ele = Q.poll();
             if (!(ele instanceof Leaf)) {
-                float upperLeftX = (float)(ele.xBound - (size / 2));
-                float upperLeftY = (float)(ele.yBound + (size / 2));
+                float upperLeftX = (float)(ele.xBound - (ele.size / 2));
+                float upperLeftY = (float)(ele.yBound + (ele.size / 2));
                 Rectangle2D.Float thisQuad =
-                        new Rectangle2D.Float(upperLeftX, upperLeftY, (float)size, (float)size);
+                        new Rectangle2D.Float(upperLeftX, upperLeftY, (float)ele.size, (float)ele.size);
                 if (searchCircle.intersects(thisQuad)) {
-                    for (prQuadTree child : ele.quads) {
+                    for (Node child : ele.quads) {
                         Q.add(child);
                     }
                 }
@@ -118,26 +156,10 @@ public class prQuadTree implements Xmlable {
     }
 
     public Element toXml() {
-        Element treeNode = getBuilder().createElement("gray");
-        treeNode.setAttribute("x", Integer.toString(this.xBound));
-        treeNode.setAttribute("y", Integer.toString(this.yBound));
-        for (prQuadTree child : this.quads) {
-            treeNode.appendChild(child.toXml());
-        }
-        return treeNode;
+        return root.toXml();
     }
 
     public boolean contains(City city) {
-        int quad = findQuad((int) city.getX(), (int) city.getY());
-        return quads[quad].contains(city);
-    }
-    private int findQuad(int x, int y) {
-        if (y <= yBound) {
-            if (x <= xBound) return 3;
-            else return 2;
-        } else {
-            if (x <= xBound) return 0;
-            else return 1;
-        }
+        return root.quads[root.findQuad(city)].contains(city);
     }
 }
