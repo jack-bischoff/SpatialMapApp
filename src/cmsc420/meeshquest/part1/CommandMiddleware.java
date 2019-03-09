@@ -1,11 +1,12 @@
 package cmsc420.meeshquest.part1;
 import cmsc420.meeshquest.part1.DataObject.*;
-import cmsc420.meeshquest.part1.Databases.CityDictionary;
+import cmsc420.meeshquest.part1.Structures.CityDictionary;
 
-import cmsc420.meeshquest.part1.Databases.CitySpatialMap;
+import cmsc420.meeshquest.part1.Structures.CitySpatialMap;
 import org.w3c.dom.*;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
 //TODO: Extend Response object to handle output, naming...
@@ -45,7 +46,7 @@ public class CommandMiddleware {
             return new Failure((String) res.payload);
 
         Element cityList = builder.createElement("cityList");
-        City[] cities = (City[]) res.payload;
+        ArrayList<City> cities = (ArrayList<City>) res.payload;
         for (City city : cities) {
             cityList.appendChild(city.toXml());
         }
@@ -88,7 +89,7 @@ public class CommandMiddleware {
 
         Response res = spatialMap.mapCity(city);
         if (res.status.equals("error"))
-            return new Failure((String) res.payload);
+            return new Failure(res.payload.toString());
         return new Success();
     }
 
@@ -101,7 +102,7 @@ public class CommandMiddleware {
 
         Response res = spatialMap.unmapCity(city);
         if (res.status.equals("error"))
-            return new Failure((String) res.payload);
+            return new Failure(res.payload.toString());
 
         return new Success();
     }

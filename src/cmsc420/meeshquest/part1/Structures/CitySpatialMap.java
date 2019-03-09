@@ -7,6 +7,7 @@ import cmsc420.meeshquest.part1.Databases.Spatial.prQuadTree;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -63,9 +64,14 @@ public class CitySpatialMap {
     }
 
     public Response rangeCities (int x, int y, int radius) {
-        City[] citiesInRange = spatialMap.range(new Point2D.Float(x, y), radius);
-        if (citiesInRange.length == 0)
+        ArrayList<City> citiesInRange = spatialMap.range(new Point2D.Float(x, y), radius);
+        if (citiesInRange.isEmpty())
             return  new Response("error", "noCitiesExistInRange");
+        citiesInRange.sort(new Comparator<City>() {
+            public int compare(City o1, City o2) {
+                return -1 * (o1.getName().compareTo(o2.getName()));
+            }
+        });
         return new Response("success", citiesInRange);
     }
 //    public void nearest(Point2D.Float nearestTo) {

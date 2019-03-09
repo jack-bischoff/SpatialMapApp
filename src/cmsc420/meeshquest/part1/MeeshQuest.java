@@ -1,5 +1,6 @@
 package cmsc420.meeshquest.part1;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,9 +19,9 @@ public class MeeshQuest {
     	Document results = null;
     	CommandMiddleware mw;
         try {
-        	Document doc = XmlUtility.validateNoNamespace(System.in);
-        	results = XmlUtility.getDocumentBuilder().newDocument();
-
+            Document doc = XmlUtility.validateNoNamespace(new File("./xmltest/part1.expanded.input.xml"));
+        	//Document doc = XmlUtility.validateNoNamespace(System.in);
+            results = XmlBuilder.getBuilder();
         	Element Root = results.createElement("results");
         	Element commandNode = doc.getDocumentElement();
             int spatialWidth = Integer.parseInt(commandNode.getAttribute("spatialWidth")),
@@ -86,7 +87,7 @@ public class MeeshQuest {
 
         	}
         	results.appendChild(Root);
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+        } catch (SAXException | IOException | ExceptionInInitializerError | ParserConfigurationException e) {
 			try {
 				results = XmlUtility.getDocumentBuilder().newDocument();
 				results.appendChild(results.createElement("fatalError"));

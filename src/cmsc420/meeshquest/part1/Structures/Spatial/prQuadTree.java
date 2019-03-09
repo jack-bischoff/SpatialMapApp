@@ -3,10 +3,11 @@ package cmsc420.meeshquest.part1.Databases.Spatial;
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.Xmlable;
 import org.w3c.dom.Element;
-import sun.invoke.empty.Empty;
 
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -88,8 +89,32 @@ public class prQuadTree implements Xmlable {
         return null;
     }
 
-    public City[] range(Point2D.Float from, int radius) {
+    public ArrayList<City> range(Point2D.Float from, int radius) {
+        ArrayList<City> citiesInRange = new ArrayList<>();
+        Ellipse2D.Float searchCircle =
+                new Ellipse2D.Float( ((int)from.getX() + radius), ((int)from.getY() + radius), radius, radius );
 
+        PriorityQueue<prQuadTree> Q = new PriorityQueue<>();
+        Q.add(this);
+        while (!Q.isEmpty()) {
+            prQuadTree ele = Q.poll();
+            if (!(ele instanceof Leaf)) {
+                float upperLeftX = (float)(ele.xBound - (size / 2));
+                float upperLeftY = (float)(ele.yBound + (size / 2));
+                Rectangle2D.Float thisQuad =
+                        new Rectangle2D.Float(upperLeftX, upperLeftY, (float)size, (float)size);
+                if (searchCircle.intersects(thisQuad)) {
+                    for (prQuadTree child : ele.quads) {
+                        Q.add(child);
+                    }
+                }
+            } else if (!(ele instanceof EmptyLeaf)) {
+                if (searchCircle.contains(((Leaf) ele).city.getLocation())) {
+                    citiesInRange.add(((Leaf) ele).city);
+                }
+            }
+        }
+        return citiesInRange;
     }
 
     public Element toXml() {

@@ -29,7 +29,7 @@ public class Leaf extends prQuadTree implements Xmlable {
     }
 
     public double dist(Point2D.Float point) {
-        return point.distance(city.getX(), city.getY());
+        return point.distance(city.getLocation());
     }
 
     public boolean contains(City city) {
