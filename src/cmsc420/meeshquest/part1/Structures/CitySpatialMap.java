@@ -1,15 +1,12 @@
-package cmsc420.meeshquest.part1.Databases;
+package cmsc420.meeshquest.part1.Structures;
 
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.DataObject.Response;
-import cmsc420.meeshquest.part1.Databases.Spatial.Leaf;
-import cmsc420.meeshquest.part1.Databases.Spatial.prQuadTree;
+import cmsc420.meeshquest.part1.Structures.Spatial.prQuadTree;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.PriorityQueue;
 
 public class CitySpatialMap {
     private prQuadTree spatialMap;
@@ -18,7 +15,7 @@ public class CitySpatialMap {
     public CitySpatialMap(int width, int height) {
         this.width = width;
         this.height = height;
-        this.spatialMap = new prQuadTree(new Point2D.Float(width/2, height/2), 64);
+        this.spatialMap = new prQuadTree(width/2, height/2), 64);
     }
 
     public Response mapCity(City city){
@@ -27,7 +24,7 @@ public class CitySpatialMap {
         if ((int) city.getX() > width || (int) city.getY() > height)
             return new Response("error", "cityOutOfBounds");
 
-        this.spatialMap = this.spatialMap.insert(city);
+        this.spatialMap.insert(city);
         this.cityCounter++;
         return new Response("success", null);
     }
@@ -35,7 +32,7 @@ public class CitySpatialMap {
     public Response unmapCity(City city) {
         if (!spatialMap.contains(city))
             return new Response("error", "cityNotMapped");
-        this.spatialMap = this.spatialMap.delete(city);
+        this.spatialMap.delete(city);
         this.cityCounter--;
 
         return new Response("success", null);

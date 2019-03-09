@@ -1,10 +1,8 @@
-package cmsc420.meeshquest.part1.Databases;
+package cmsc420.meeshquest.part1.Structures;
 
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.CoordinateComparator;
-import cmsc420.meeshquest.part1.DataObject.Failure;
 import cmsc420.meeshquest.part1.DataObject.Response;
-import cmsc420.meeshquest.part1.DataObject.Success;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
