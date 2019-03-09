@@ -6,11 +6,11 @@ public class Result implements Xmlable {
     Element xmlOutput;
 
     public Result() {
-        this(null);
+        this.xmlOutput = getBuilder().createElement("output");
     }
 
     public Result(Element output) {
-        this.xmlOutput = getBuilder().createElement("output");
+        this();
         this.xmlOutput.appendChild(output);
     }
 
