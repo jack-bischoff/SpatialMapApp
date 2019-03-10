@@ -10,9 +10,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class prQuadTree implements Xmlable {
-
+    private int maxX, maxY, initialSize;
     private Node root = EmptyLeaf.EmptyLeaf();
 
     class distCompare implements Comparator<Node> {
@@ -30,24 +31,18 @@ public class prQuadTree implements Xmlable {
         }
     }
 
-    prQuadTree() {}
-    public prQuadTree(int width, int height, int size) {
-        int x = width;
-        this.y = height;
-        this.size = size;
-        int ds = size / 2;
-//
-//        //In clockwise order:
-//        quads = new prQuadTree[]{
-//                new EmptyLeaf(new Point2D.Float(x - ds, y + ds), ds), //NW
-//                new EmptyLeaf(new Point2D.Float(x + ds, y + ds), ds), //NE
-//                new EmptyLeaf(new Point2D.Float(x + ds, y - ds), ds), //SE
-//                new EmptyLeaf(new Point2D.Float(x - ds, y - ds), ds)  //SW
-//        };
+    public prQuadTree(int width, int height) {
+        this.maxX = width;
+        this.maxY = height;
+        this.initialSize = width;
     }
+
+    public boolean isEmpty() { return root instanceof EmptyLeaf; }
+    public boolean isOutOfBounds(City city) { return city.getX() > maxX || city.getY() > maxY;}
+
     private int[] calcBounds(Node parent, int intoThisQuad) {
         int[] nextMiddle = null;
-        int x = parent.xBound, y = parent.yBound, ds = parent.size / 2;
+        int x = parent.xBound, y = parent.yBound, ds = parent.sizeOfQuad / 2;
 
         if (intoThisQuad == 0)       nextMiddle = new int[]{x - ds, y + ds}; //NW
         else if (intoThisQuad == 1)  nextMiddle = new int[]{x + ds, y + ds}; //NE
@@ -57,28 +52,47 @@ public class prQuadTree implements Xmlable {
         return nextMiddle;
     }
 
-    public void insert(City city) {
+    //Unfortunately deep decomposition overflows Java stack
+    //Don't know if tail-recursive insert is possible/optimized in Java
+    //Could do prQuadTree with buckets, but...maybe later...complicates distance ranking
+    public boolean insert(City city) {
         int nextQuad = 0;
         Node curr = root, prev = null;
+
+        //Basic error checking
+        //CitySpatialMap never passes in malformed data, since it handles errors
+        //but the data structure shouldn't crash or devolve into an infinite loop, regardless.
+        if (isOutOfBounds(city)) return false;
+        if (root.contains(city)) return false;
+
+        //Finding insertion quadrant. Insertion begins at a Leaf
         while (!(curr instanceof Leaf)) {
             nextQuad = curr.findQuad(city);
             prev = curr;
             curr = curr.quads[nextQuad];
         }
-
+        //No city previously here.
         if (curr instanceof EmptyLeaf) {
             //EmptyLeaf can be replaced by a Leaf
-            //Special case for head
+            //Special case for head...probably could do some kind of dummy head node or something...
             if (prev == null) root = new Leaf(city);
             else prev.quads[nextQuad] = new Leaf(city);
         } else {
-            //Decomposition of Leaf into more quadrants
-            Leaf temp = (Leaf)curr;
+            //City already in quadrant. Decomposition of Leaf into more quadrants
             int[] middlePt;
+            Leaf temp = (Leaf)curr;
             curr = prev;
+            //if head was a Leaf then transform it into a quadrant
+            if (curr == null) {
+                root = new Internal(maxX, maxY, maxX / 2);
+                curr = root;
+            }
+
+            //Re-finding nextQuad in-case of head corner case
+            nextQuad = curr.findQuad(city);
             while (nextQuad == curr.findQuad(temp.city)) {
                 middlePt = calcBounds(curr, nextQuad);
-                Node n = new Internal(middlePt[0], middlePt[1],curr.size / 2);
+                Node n = new Internal(middlePt[0], middlePt[1],curr.sizeOfQuad / 2);
                 curr.quads[nextQuad] = n;
                 curr = n;
                 nextQuad = curr.findQuad(city);
@@ -86,27 +100,43 @@ public class prQuadTree implements Xmlable {
             curr.quads[nextQuad] = new Leaf(city);
             curr.quads[curr.findQuad(temp.city)] = new Leaf(temp.city);
         }
+        return true;
     }
 
     public boolean delete(City city) {
+        Stack<Node> stack = new Stack<>();
         Node curr = root, prev = null;
         int nextQuad = 0;
+
         while (!(curr instanceof Leaf)){
+            stack.push(curr);
             nextQuad = curr.findQuad(city);
-            prev = curr;
             curr = curr.quads[nextQuad];
         }
+        //Will check if Leaf.city == city or if EmptyLeaf then false
         if (((Leaf) curr).contains(city)) {
-            if (prev == null) {
+            if (stack.isEmpty()) {
                 root = EmptyLeaf.EmptyLeaf();
             }
-            else{
-                prev.quads[nextQuad] = EmptyLeaf.EmptyLeaf();
-                int nonEmpty = 4;
-                for (Node child : prev.quads) {
-                    if (child instanceof EmptyLeaf) nonEmpty--;
+            else {
+                boolean done = false;
+                Node parent = stack.pop();
+                parent.quads[nextQuad] = EmptyLeaf.EmptyLeaf();
+                //Cleanup
+                while (!(stack.isEmpty()) && !done) {
+                    Leaf leaf = null;
+                    for (Node child : parent.quads) {
+                        if (child instanceof Internal) done = true;
+                        else if (!(child instanceof EmptyLeaf)) {
+                            if (leaf == null) leaf = (Leaf) child;
+                            else done = true;
+                        }
+                    }
+                    if (!done) {
+                        parent = stack.pop();
+                        parent.quads[parent.findQuad(leaf.city)] = leaf;
+                    }
                 }
-
             }
         } else return false;
 
@@ -137,10 +167,10 @@ public class prQuadTree implements Xmlable {
         while (!Q.isEmpty()) {
             Node ele = Q.poll();
             if (!(ele instanceof Leaf)) {
-                float upperLeftX = (float)(ele.xBound - (ele.size / 2));
-                float upperLeftY = (float)(ele.yBound + (ele.size / 2));
+                float upperLeftX = (float)(ele.xBound - (ele.sizeOfQuad / 2));
+                float upperLeftY = (float)(ele.yBound + (ele.sizeOfQuad / 2));
                 Rectangle2D.Float thisQuad =
-                        new Rectangle2D.Float(upperLeftX, upperLeftY, (float)ele.size, (float)ele.size);
+                        new Rectangle2D.Float(upperLeftX, upperLeftY, (float)ele.sizeOfQuad, (float)ele.sizeOfQuad);
                 if (searchCircle.intersects(thisQuad)) {
                     for (Node child : ele.quads) {
                         Q.add(child);
@@ -155,11 +185,11 @@ public class prQuadTree implements Xmlable {
         return citiesInRange;
     }
 
-    public Element toXml() {
-        return root.toXml();
-    }
-
     public boolean contains(City city) {
         return root.quads[root.findQuad(city)].contains(city);
+    }
+
+    public Element toXml() {
+        return root.toXml();
     }
 }

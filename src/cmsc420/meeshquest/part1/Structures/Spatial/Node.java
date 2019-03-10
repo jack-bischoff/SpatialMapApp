@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 
 public abstract class Node implements Xmlable {
     Node[] quads; //Array indices correspond to quadrants in a cartesian plane.
-    int xBound, yBound,size;
+    int xBound, yBound, sizeOfQuad;
 
     abstract double dist(Point2D.Float point);
     public abstract Element toXml();

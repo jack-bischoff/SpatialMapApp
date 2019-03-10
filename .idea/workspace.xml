@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java" line="2" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="a1d9de0b-34dd-4d76-a77c-f69a5794a8e0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/XmlBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/CommandMiddleware.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/CommandMiddleware.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/DataObject/Failure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/DataObject/Failure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/DataObject/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/DataObject/Result.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Databases/CityDictionary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CityDictionary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Databases/CitySpatialMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Databases/Spatial/EmptyLeaf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/EmptyLeaf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Databases/Spatial/Leaf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Databases/Spatial/prQuadTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/MeeshQuest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/MeeshQuest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Xmlable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Xmlable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,24 +18,50 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/MeeshQuest.java">
+        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/EmptyLeaf.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="23">
-              <caret line="21" column="92" selection-start-line="21" selection-start-column="92" selection-end-line="21" selection-end-column="92" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="92">
+              <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/CommandMiddleware.java">
+        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="91" column="31" selection-start-line="91" selection-start-column="31" selection-end-line="91" selection-end-column="31" />
+            <state relative-caret-position="92">
+              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="92">
+              <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="138">
+              <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-513">
+              <caret line="89" lean-forward="true" selection-start-line="89" selection-end-line="89" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="class#distCompare#0;class#prQuadTree#0" />
+                <element signature="e#7263#7264#0" expanded="true" />
+                <element signature="e#7328#7329#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -58,90 +70,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
-              <caret line="34" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="106" column="50" lean-forward="true" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="50" />
+            <state relative-caret-position="368">
+              <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#5641#5642#0" expanded="true" />
-                <element signature="e#5752#5753#0" expanded="true" />
+                <element signature="e#444#445#0" expanded="true" />
+                <element signature="e#511#512#0" expanded="true" />
+                <element signature="e#1319#1320#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#224#225#0" expanded="true" />
-                <element signature="e#256#257#0" expanded="true" />
-                <element signature="e#353#354#0" expanded="true" />
-                <element signature="e#497#498#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/EmptyLeaf.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="12" column="4" lean-forward="true" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#293#294#0" expanded="true" />
-                <element signature="e#394#395#0" expanded="true" />
-                <element signature="e#425#426#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="35" column="40" lean-forward="true" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#732#733#0" expanded="true" />
-                <element signature="e#761#762#0" expanded="true" />
-                <element signature="e#480#481#0" expanded="true" />
-                <element signature="e#547#548#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/xmltest/part1.expanded.input.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="3" column="25" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -205,16 +140,16 @@
         <option value="$PROJECT_DIR$/xmltest/part1.expanded.input.xml" />
         <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/EmptyLeaf.java" />
         <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java" />
-        <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java" />
-        <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java" />
         <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java" />
+        <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java" />
+        <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java" />
         <option value="$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-116" />
-    <option name="y" value="-11" />
+    <option name="x" value="-117" />
+    <option name="y" value="-12" />
     <option name="width" value="1890" />
     <option name="height" value="960" />
   </component>
@@ -224,59 +159,54 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="cmsc420" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="cmsc420" type="462c0819:PsiDirectoryNode" />
               <item name="part1" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="cmsc420" type="462c0819:PsiDirectoryNode" />
               <item name="part1" type="462c0819:PsiDirectoryNode" />
               <item name="Structures" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
+              <item name="MeeshQuest" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MeeshQuest" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="cmsc420" type="462c0819:PsiDirectoryNode" />
               <item name="part1" type="462c0819:PsiDirectoryNode" />
               <item name="Structures" type="462c0819:PsiDirectoryNode" />
               <item name="Spatial" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="meeshquest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="meeshquest" type="462c0819:PsiDirectoryNode" />
-              <item name="xmltest" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -285,7 +215,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -352,10 +282,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4991119" visible="true" weight="0.1743941" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4991119" visible="true" weight="0.17408586" />
       <window_info id="Structure" order="1" sideWeight="0.5008881" side_tool="true" weight="0.17488076" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -398,13 +328,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/out/production/MeeshQuest/cmsc420/meeshquest/part1/CommandMiddleware.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="19" column="124" selection-start-line="19" selection-start-column="124" selection-end-line="19" selection-end-column="124" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/out/production/MeeshQuest/cmsc420/meeshquest/part1/CommandMiddleware.class" />
     <entry file="file://$PROJECT_DIR$/src/README.md" />
     <entry file="file://$PROJECT_DIR$/src/cmsc420/README.md">
       <provider selected="true" editor-type-id="text-editor">
@@ -413,20 +337,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/src.zip!/com/sun/org/apache/xerces/internal/dom/NodeImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="236" selection-start-line="236" selection-end-line="236" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/src.zip!/com/sun/org/apache/xerces/internal/dom/ParentNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1015">
-          <caret line="356" selection-start-line="356" selection-end-line="356" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/src.zip!/com/sun/org/apache/xerces/internal/dom/NodeImpl.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/src.zip!/com/sun/org/apache/xerces/internal/dom/ParentNode.java" />
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Xmlable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="46">
@@ -458,13 +370,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CityDictionary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-184">
-          <caret line="35" column="37" lean-forward="true" selection-start-line="35" selection-start-column="37" selection-end-line="35" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CityDictionary.java" />
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/DataObject/Result.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="92">
@@ -495,100 +401,70 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java">
+    <entry file="file://$PROJECT_DIR$/xmltest/part1.expanded.input.xml" />
+    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/MeeshQuest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="106" column="50" lean-forward="true" selection-start-line="106" selection-start-column="50" selection-end-line="106" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#5641#5642#0" expanded="true" />
-            <element signature="e#5752#5753#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="34" column="8" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="8" />
+        <state relative-caret-position="552">
+          <caret line="35" column="69" selection-start-line="35" selection-start-column="69" selection-end-line="35" selection-end-column="69" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/CommandMiddleware.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
-          <caret line="91" column="31" selection-start-line="91" selection-start-column="31" selection-end-line="91" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/MeeshQuest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="21" column="92" selection-start-line="21" selection-start-column="92" selection-end-line="21" selection-end-column="92" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <caret line="94" selection-start-line="94" selection-end-line="94" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Leaf.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#224#225#0" expanded="true" />
-            <element signature="e#256#257#0" expanded="true" />
-            <element signature="e#353#354#0" expanded="true" />
-            <element signature="e#497#498#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="92">
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/EmptyLeaf.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="12" column="4" lean-forward="true" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#293#294#0" expanded="true" />
-            <element signature="e#394#395#0" expanded="true" />
-            <element signature="e#425#426#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="92">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/Internal.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="35" column="40" lean-forward="true" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
+        <state relative-caret-position="92">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/CitySpatialMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#732#733#0" expanded="true" />
-            <element signature="e#761#762#0" expanded="true" />
-            <element signature="e#480#481#0" expanded="true" />
-            <element signature="e#547#548#0" expanded="true" />
+            <element signature="e#444#445#0" expanded="true" />
+            <element signature="e#511#512#0" expanded="true" />
+            <element signature="e#1319#1320#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xmltest/part1.expanded.input.xml">
+    <entry file="file://$PROJECT_DIR$/src/cmsc420/meeshquest/part1/Structures/Spatial/prQuadTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="3" column="25" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="25" />
+        <state relative-caret-position="-513">
+          <caret line="89" lean-forward="true" selection-start-line="89" selection-end-line="89" />
+          <folding>
+            <element signature="class#distCompare#0;class#prQuadTree#0" />
+            <element signature="e#7263#7264#0" expanded="true" />
+            <element signature="e#7328#7329#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
