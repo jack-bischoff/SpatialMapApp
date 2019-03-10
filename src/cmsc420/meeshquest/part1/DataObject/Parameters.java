@@ -20,7 +20,7 @@ public class Parameters implements Xmlable {
             this.params = new LinkedHashMap<>();
             for (String param : ordering) {
                 Node item = attributes.getNamedItem(param);
-                params.put(item.getNodeName(), item.getNodeValue());
+                if (item != null) params.put(item.getNodeName(), item.getNodeValue());
             }
         }
     }

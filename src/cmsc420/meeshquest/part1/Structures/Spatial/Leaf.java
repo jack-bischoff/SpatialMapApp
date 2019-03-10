@@ -21,11 +21,20 @@ class Leaf extends Node {
         return city.getName().equals(this.city.getName());
     }
 
+    Node delete(City city) {
+        if (city.getName().equals(this.city.getName())) return EmptyLeaf.EmptyLeaf();
+        return this;
+    }
+
+    int[] calcNextMiddle(int nextQuad) {
+        return new int[0];
+    }
+
     public Element toXml() {
         Element cityNode = getBuilder().createElement("black");
         cityNode.setAttribute("name", city.getName());
-        cityNode.setAttribute("x", Double.toString(city.getX()));
-        cityNode.setAttribute("y", Double.toString(city.getY()));
+        cityNode.setAttribute("x", Integer.toString((int)city.getX()));
+        cityNode.setAttribute("y", Integer.toString((int)city.getY()));
         return cityNode;
     }
 }

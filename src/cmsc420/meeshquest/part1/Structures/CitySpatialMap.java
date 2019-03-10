@@ -3,6 +3,7 @@ package cmsc420.meeshquest.part1.Structures;
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.DataObject.Response;
 import cmsc420.meeshquest.part1.Structures.Spatial.prQuadTree;
+import cmsc420.meeshquest.part1.VisualMap;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -12,7 +13,16 @@ public class CitySpatialMap {
     private prQuadTree spatialMap;
 
     public CitySpatialMap(int width, int height) {
+
         this.spatialMap = new prQuadTree(width, height);
+    }
+
+    public boolean contains(City city) {
+        return spatialMap.contains(city);
+    }
+
+    public void clearAll() {
+        this.spatialMap = this.spatialMap.clear();
     }
 
     public Response mapCity(City city){
@@ -22,14 +32,17 @@ public class CitySpatialMap {
             return new Response("error", "cityOutOfBounds");
 
         this.spatialMap.insert(city);
+        VisualMap.VisualMap().addPoint(city.getName(), city.getX(), city.getY());
         return new Response("success", null);
     }
 
     public Response unmapCity(City city) {
-        if (this.spatialMap.delete(city))
-            return new Response("success", null);
-        else
+        if (!this.spatialMap.contains(city))
             return new Response("error", "cityNotMapped");
+
+        this.spatialMap.delete(city);
+        VisualMap.VisualMap().removePoint(city.getName(), city.getX(), city.getY());
+        return new Response("success", null);
     }
 
     public Response printPRQuadTree() {
@@ -39,9 +52,7 @@ public class CitySpatialMap {
         return new Response("success", spatialMap.toXml());
     }
 
-    public boolean contains(City city) {
-        return spatialMap.contains(city);
-    }
+
     public Response nearestCity (Point2D.Float nearestTo) {
         if (spatialMap.isEmpty())
             return new Response("error", "mapIsEmpty");

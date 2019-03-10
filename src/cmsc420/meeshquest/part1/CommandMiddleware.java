@@ -1,11 +1,14 @@
 package cmsc420.meeshquest.part1;
+import cmsc420.drawing.CanvasPlus;
 import cmsc420.meeshquest.part1.DataObject.*;
 import cmsc420.meeshquest.part1.Structures.CityDictionary;
 
 import cmsc420.meeshquest.part1.Structures.CitySpatialMap;
 import org.w3c.dom.*;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.ArrayList;
 
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
@@ -22,6 +25,13 @@ public class CommandMiddleware {
         this.spatialMap = new CitySpatialMap(width, height);
     }
 
+    private Element cityListBuilder(Iterable<City> cities) {
+        Element cityList = builder.createElement("cityList");
+        for (City city : cities) {
+            cityList.appendChild(city.toXml());
+        }
+        return cityList;
+    }
     Result createCity(Parameters params)  {
         String
                 name = params.get("name"),
@@ -44,17 +54,12 @@ public class CommandMiddleware {
 
         if (res.status.equals("error"))
             return new Failure((String) res.payload);
-
-        Element cityList = builder.createElement("cityList");
-        ArrayList<City> cities = (ArrayList<City>) res.payload;
-        for (City city : cities) {
-            cityList.appendChild(city.toXml());
-        }
-        return new Success(cityList);
+        return new Success(cityListBuilder((Iterable<City>)res.payload));
     }
 
     Result clearAll() {
         cityDictionary.clearAll();
+        spatialMap.clearAll();
         return new Success();
     }
 
@@ -70,7 +75,7 @@ public class CommandMiddleware {
         if (spatialMap.contains(toDelete)) {
             spatialMap.unmapCity(toDelete);
             output = toDelete.toXml();
-            builder.renameNode(output,"","cityUnmapped");
+            output = (Element) builder.renameNode(output,null,"cityUnmapped");
         }
 
         res = cityDictionary.delete(name);
@@ -107,12 +112,15 @@ public class CommandMiddleware {
         return new Success();
     }
 
-    Result saveMap(Parameters params) {
-        String name = params.get("name");
+    Result saveMap(Parameters params) throws IOException {
+        return saveMap(params.get("name"));
+    }
 
-        //do stuff
+    private Result saveMap(String name) throws IOException {
+        VisualMap.VisualMap().save(name);
         return new Success();
     }
+
     Result printPRQuadTree() {
         Response res = spatialMap.printPRQuadTree();
         if (res.status.equals("error"))
@@ -123,27 +131,29 @@ public class CommandMiddleware {
         return new Success(tree);
     }
     Result nearestCity(Parameters params) {
-       Point2D.Float point = null; // = params.get("point");
+       Point2D.Float point = new Point2D.Float(
+                       Integer.parseInt(params.get("x")),
+                       Integer.parseInt(params.get("y"))
+       );
+
         Response res = spatialMap.nearestCity(point);
         if (res.status.equals("error"))
             return new Failure(res.payload.toString());
         return new Success(((City)res.payload).toXml());
     }
 
-    Result rangeCities(Parameters params) {
+    Result rangeCities(Parameters params) throws IOException {
         int x = Integer.parseInt(params.get("x"));
         int y = Integer.parseInt(params.get("y"));
         int radius = Integer.parseInt(params.get("radius"));
-        //Do something with optional saveMap
         Response res = spatialMap.rangeCities(x, y, radius);
+        if (params.get("saveMap") != null){
+            VisualMap.VisualMap().addCircle(x, y, radius, Color.BLUE,false);
+            saveMap(params.get("saveMap"));
+        }
         if (res.status.equals("error"))
             return new Failure(res.payload.toString());
 
-        City[] citiesInRange = (City[])res.payload;
-        Element cityList = builder.createElement("cityList");
-        for (City city : citiesInRange) {
-            cityList.appendChild(city.toXml());
-        }
-        return new Success(cityList);
+        return new Success(cityListBuilder((Iterable<City>) res.payload));
     }
 }

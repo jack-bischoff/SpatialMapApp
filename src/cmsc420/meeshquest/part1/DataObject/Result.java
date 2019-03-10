@@ -11,7 +11,7 @@ public class Result implements Xmlable {
 
     public Result(Element output) {
         this();
-        this.xmlOutput.appendChild(output);
+        if (output != null) this.xmlOutput.appendChild(output);
     }
 
     public Element toXml() {

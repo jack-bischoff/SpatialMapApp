@@ -19,8 +19,8 @@ public class MeeshQuest {
     	Document results = null;
     	CommandMiddleware mw;
         try {
-            Document doc = XmlUtility.validateNoNamespace(new File("./xmltest/part1.expanded.input.xml"));
-        	//Document doc = XmlUtility.validateNoNamespace(System.in);
+//            Document doc = XmlUtility.validateNoNamespace(new File("./xmltest/part1.input.xml"));
+        	Document doc = XmlUtility.validateNoNamespace(System.in);
             results = XmlBuilder.getBuilder();
         	Element Root = results.createElement("results");
         	Element commandNode = doc.getDocumentElement();
@@ -63,12 +63,16 @@ public class MeeshQuest {
                             params = new Parameters(attrs, new String[]{"name"});
                             Output = mw.unmapCity(params);
                             break;
+                        case "printPRQuadtree":
+                            Output = mw.printPRQuadTree();
+                            break;
                         case "saveMap":
+                            params = new Parameters(attrs, new String[]{"name"});
                             Output = mw.saveMap(params);
                             break;
                         case "rangeCities":
                             //figure out optional param saveMap
-                            params = new Parameters(attrs, new String[]{"x", "y", "radius"});
+                            params = new Parameters(attrs, new String[]{"x", "y", "radius", "saveMap"});
                             Output = mw.rangeCities(params);
                             break;
                         case "nearestCity":
@@ -77,6 +81,7 @@ public class MeeshQuest {
                             break;
                         default:
                             Output = new Result(results.createElement("undefinedError"));
+
                     }
 
                     Status = Output.toXml();
@@ -96,6 +101,7 @@ public class MeeshQuest {
 			}
 		} finally {
             try {
+                if (VisualMap.isInitalized()) VisualMap.VisualMap().dispose();
 				XmlUtility.print(results);
 			} catch (TransformerException e) {
 				e.printStackTrace();
