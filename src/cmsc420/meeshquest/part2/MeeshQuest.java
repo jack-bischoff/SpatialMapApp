@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import cmsc420.meeshquest.part2.DataObject.Command;
 import cmsc420.meeshquest.part2.DataObject.Parameters;
 import cmsc420.meeshquest.part2.DataObject.Result;
 import org.w3c.dom.*;
@@ -32,14 +33,14 @@ public class MeeshQuest {
         	for (int i = 0; i < nl.getLength(); i++) {
         		if (nl.item(i).getNodeType() == Document.ELEMENT_NODE) {
         			commandNode = (Element) nl.item(i);
-        			String commandName = commandNode.getNodeName();
+
 					NamedNodeMap attrs = commandNode.getAttributes();
 					Parameters params = new Parameters();
+					Command command = new Command(commandNode.getNodeName(), commandNode.getAttribute("id"));
                     Result Output;
-					Element Status, Command = results.createElement("command");
-					Command.setAttribute("name", commandName);
+					Element Status;
 
-                    switch (commandName) {
+                    switch (command.getName()) {
                         case "createCity":
                             params = new Parameters(attrs, new String[]{"name", "x", "y", "radius", "color"});
                             Output = mw.createCity(params);
@@ -84,10 +85,11 @@ public class MeeshQuest {
 
                     }
 
-                    Status = Output.toXml();
-                    Status.insertBefore(params.toXml(), Status.getFirstChild());
-                    Status.insertBefore(Command, Status.getFirstChild());
-                    Root.appendChild(Status);
+                    //Think of this like building the xml bottom up -- a stack almost.
+                    Status = Output.toXml(); // Create wrapper xml with possible output tag & output
+                    Status.insertBefore(params.toXml(), Status.getFirstChild()); //Insert parameters before output tag
+                    Status.insertBefore(command.toXml(), Status.getFirstChild()); // Insert command before parameters
+                    Root.appendChild(Status); // append total command result to root of xml
         		}
 
         	}
