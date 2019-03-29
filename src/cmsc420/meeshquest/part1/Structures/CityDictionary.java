@@ -3,6 +3,7 @@ package cmsc420.meeshquest.part1.Structures;
 import cmsc420.meeshquest.part1.DataObject.City;
 import cmsc420.meeshquest.part1.CoordinateComparator;
 import cmsc420.meeshquest.part1.DataObject.Response;
+import cmsc420.meeshquest.part1.Fault;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -27,28 +28,28 @@ public class CityDictionary {
         Point2D.Float coord = new Point2D.Float(x, y);
 
         if (mapByCoords.containsKey(coord))
-            return new Response("error", "duplicateCityCoordinates");
+            return new Response(true, Fault.duplicateCityCoordinates);
         if (mapByName.containsKey(name))
-            return new Response("error", "duplicateCityName");
+            return new Response(true, Fault.duplicateCityName);
         //success
         City newCity = new City(name, x, y, radius, color);
         mapByCoords.put(coord, newCity);
         mapByName.put(name, newCity);
-        return new Response("success", null);
+        return new Response();
     }
 
     public Response delete(String name) {
         if (!mapByName.containsKey(name))
-            return new Response("error", "cityDoesNotExist");
+            return new Response(true, Fault.cityDoesNotExist);
 
         mapByCoords.remove(mapByName.get(name).getLocation());
         mapByName.remove(name);
-        return new Response("success", null);
+        return new Response();
     }
 
 
     public Response list(String sortBy) {
-        if (this.mapByName.size() < 1) return new Response("error", "noCitiesToList");
+        if (this.mapByName.size() < 1) return new Response(true, Fault.noCitiesToList);
         ArrayList<City> citiesList = new ArrayList<>();
         if (sortBy.equals("name")) {
            for ( String name : mapByName.descendingKeySet() ) {
@@ -59,7 +60,7 @@ public class CityDictionary {
                 citiesList.add(this.mapByCoords.get(coord));
             }
         }
-        return new Response("success", citiesList);
+        return new Response(citiesList);
     }
 
     public void clearAll() {

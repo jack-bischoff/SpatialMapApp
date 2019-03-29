@@ -6,11 +6,22 @@ import java.util.Collection;
 
 public class Response {
     public Object payload;
-     public String status;
+    public boolean error;
 
-    public Response(String status, Object payload) {
-        this.status = status;
+    public Response() {
+        this.error = false;
+        this.payload = null;
+    }
+
+    public Response(Object payload) {
+        this.error = false;
         this.payload = payload;
     }
+
+    public Response(boolean error, Object payload) {
+        this.error = error;
+        this.payload = payload;
+    }
+
 
 }

@@ -6,7 +6,8 @@ import org.w3c.dom.Element;
 
 public class Failure extends Result implements Xmlable {
     private String msg;
-    public Failure(String msg) {this.msg = msg;}
+
+    public Failure(Object o) {this.msg = o.toString();}
 
     public Element toXml() {
         Document builder = getBuilder();
