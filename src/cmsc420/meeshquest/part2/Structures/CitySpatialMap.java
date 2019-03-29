@@ -1,11 +1,10 @@
-package cmsc420.meeshquest.part1.Structures;
+package cmsc420.meeshquest.part2.Structures;
 
-import cmsc420.meeshquest.part1.DataObject.City;
-import cmsc420.meeshquest.part1.DataObject.Response;
-import cmsc420.meeshquest.part1.Fault;
-import cmsc420.meeshquest.part1.Structures.Spatial.prQuadTree;
-import cmsc420.meeshquest.part1.VisualMap;
-import org.w3c.dom.Element;
+import cmsc420.meeshquest.part2.DataObject.City;
+import cmsc420.meeshquest.part2.DataObject.Response;
+import cmsc420.meeshquest.part2.Fault;
+import cmsc420.meeshquest.part2.Structures.Spatial.prQuadTree;
+import cmsc420.meeshquest.part2.VisualMap;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

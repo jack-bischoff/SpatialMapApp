@@ -1,6 +1,6 @@
-package cmsc420.meeshquest.part1.DataObject;
+package cmsc420.meeshquest.part2.DataObject;
 
-import cmsc420.meeshquest.part1.Xmlable;
+import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

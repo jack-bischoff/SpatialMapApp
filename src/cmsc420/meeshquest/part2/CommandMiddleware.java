@@ -1,16 +1,13 @@
-package cmsc420.meeshquest.part1;
-import cmsc420.drawing.CanvasPlus;
-import cmsc420.meeshquest.part1.DataObject.*;
-import cmsc420.meeshquest.part1.Structures.CityDictionary;
+package cmsc420.meeshquest.part2;
+import cmsc420.meeshquest.part2.DataObject.*;
+import cmsc420.meeshquest.part2.Structures.CityDictionary;
 
-import cmsc420.meeshquest.part1.Structures.CitySpatialMap;
+import cmsc420.meeshquest.part2.Structures.CitySpatialMap;
 import org.w3c.dom.*;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.function.Function;
 
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
 //TODO: Extend Response object to handle output, naming...

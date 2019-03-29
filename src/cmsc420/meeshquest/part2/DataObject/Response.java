@@ -1,8 +1,4 @@
-package cmsc420.meeshquest.part1.DataObject;
-
-import cmsc420.meeshquest.part1.Xmlable;
-import org.w3c.dom.Element;
-import java.util.Collection;
+package cmsc420.meeshquest.part2.DataObject;
 
 public class Response {
     public Object payload;
