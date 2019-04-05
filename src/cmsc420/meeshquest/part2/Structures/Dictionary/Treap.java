@@ -117,6 +117,8 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
     public K lastKey() {
         return null;
     }
+    public Set<K> descendingKeySet() { throw new UnsupportedOperationException();}
+
     public SortedMap<K,V> headMap(K toKey) {throw new UnsupportedOperationException();}
     public SortedMap<K,V> tailMap(K fromKey) {throw new UnsupportedOperationException();}
     public Set<K> keySet() {throw new UnsupportedOperationException();}

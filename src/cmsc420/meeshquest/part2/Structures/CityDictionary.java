@@ -4,18 +4,20 @@ import cmsc420.meeshquest.part2.DataObject.City;
 import cmsc420.meeshquest.part2.CoordinateComparator;
 import cmsc420.meeshquest.part2.DataObject.Response;
 import cmsc420.meeshquest.part2.Fault;
+import cmsc420.meeshquest.part2.Structures.Dictionary.Treap;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class CityDictionary {
-    private TreeMap<String, City> mapByName;
-    private TreeMap<Point2D.Float, City> mapByCoords;
-
+//    private TreeMap<String, City> mapByName;
+//    private TreeMap<Point2D.Float, City> mapByCoords;
+    private Treap<String, City> mapByName;
+    private Treap<Point2D.Float, City> mapByCoords;
     public CityDictionary() {
-        this.mapByName = new TreeMap<>();
-        this.mapByCoords = new TreeMap<>(new CoordinateComparator());
+        this.mapByName = new Treap<>();
+        this.mapByCoords = new Treap<>(new CoordinateComparator());
     }
 
     public City get(String name) {
@@ -64,8 +66,8 @@ public class CityDictionary {
     }
 
     public void clearAll() {
-        this.mapByName = new TreeMap<>();
-        this.mapByCoords = new TreeMap<>(new CoordinateComparator());
+        this.mapByName = new Treap<>();
+        this.mapByCoords = new Treap<>(new CoordinateComparator());
     }
 }
 
