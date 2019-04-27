@@ -8,7 +8,7 @@ import cmsc420.meeshquest.part2.Structures.Dictionary.Treap;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.Map;
 
 public class CityDictionary {
 //    private TreeMap<String, City> mapByName;
@@ -54,12 +54,13 @@ public class CityDictionary {
         if (this.mapByName.size() < 1) return new Response(true, Fault.noCitiesToList);
         ArrayList<City> citiesList = new ArrayList<>();
         if (sortBy.equals("name")) {
-           for ( String name : mapByName.descendingKeySet() ) {
-               citiesList.add(this.mapByName.get(name));
-           }
+            Map.Entry<String, City> entries[] = mapByName.toArray();
+            for (int i = entries.length-1; i >= 0; i--) {
+                citiesList.add((entries[i].getValue()));
+            }
         } else if (sortBy.equals("coordinate")) {
-            for (Point2D.Float coord : this.mapByCoords.keySet()) {
-                citiesList.add(this.mapByCoords.get(coord));
+            for (Map.Entry<Point2D.Float, City> entry : this.mapByCoords.entrySet()) {
+                citiesList.add(entry.getValue());
             }
         }
         return new Response(citiesList);
