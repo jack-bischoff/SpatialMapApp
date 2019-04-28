@@ -41,4 +41,8 @@ public class City extends Point2D.Float implements Xmlable {
         }
         return city;
     }
+
+    public String toString() {
+        return toXml().toString();
+    }
 }
