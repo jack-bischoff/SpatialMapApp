@@ -47,15 +47,15 @@ public class VisualMap {
     public void addCross(int originX, int originY, int width, int height) {
         int horizontal = originX - (width / 2);
         int vertical = originY - (height / 2);
-        canvas.addLine(horizontal, originY, width, (float)height / 2, Color.BLACK);
-        canvas.addLine(originX, vertical, (float)width / 2, height, Color.BLACK);
+        canvas.addLine(horizontal, originY, width, (float)height / 2, Color.GRAY);
+        canvas.addLine(originX, vertical, (float)width / 2, height, Color.GRAY);
     }
 
     public void removeCross(int originX, int originY, int width, int height) {
         int horizontal = originX - (width / 2);
         int vertical = originY - (height / 2);
-        canvas.removeLine(horizontal, originY, width, (float)height / 2, Color.BLACK);
-        canvas.removeLine(originX, vertical, (float)width / 2, height, Color.BLACK);
+        canvas.removeLine(horizontal, originY, width, (float)height / 2, Color.GRAY);
+        canvas.removeLine(originX, vertical, (float)width / 2, height, Color.GRAY);
     }
 
     public void addCircle(int x, int y, int radius, Color color, boolean filled) {
