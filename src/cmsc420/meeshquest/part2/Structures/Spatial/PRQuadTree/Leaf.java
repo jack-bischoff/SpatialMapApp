@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part2.Structures.Spatial;
+package cmsc420.meeshquest.part2.Structures.Spatial.PRQuadTree;
 
 import cmsc420.meeshquest.part2.DataObject.City;
 import org.w3c.dom.Element;

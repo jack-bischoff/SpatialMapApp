@@ -4,7 +4,8 @@ import cmsc420.meeshquest.part2.DataObject.City;
 import cmsc420.meeshquest.part2.CoordinateComparator;
 import cmsc420.meeshquest.part2.DataObject.Response;
 import cmsc420.meeshquest.part2.Fault;
-import cmsc420.meeshquest.part2.Structures.Dictionary.Treap;
+import cmsc420.sortedmap.Treap;
+import org.w3c.dom.Element;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -20,9 +21,18 @@ public class CityDictionary {
         this.mapByCoords = new Treap<>(new CoordinateComparator());
     }
 
+    public int size() {
+        return mapByName.size();
+    }
+
+    public boolean isEmpty() {
+        return mapByName.isEmpty();
+    }
+
     public City get(String name) {
         return mapByName.get(name);
     }
+    public City get(Point2D coord) { return mapByCoords.get(coord); }
 
     public boolean contains(String name) { return get(name) != null; }
 
@@ -69,6 +79,10 @@ public class CityDictionary {
     public void clearAll() {
         this.mapByName = new Treap<>();
         this.mapByCoords = new Treap<>(new CoordinateComparator());
+    }
+
+    public Element print() {
+        return mapByName.toXml();
     }
 }
 

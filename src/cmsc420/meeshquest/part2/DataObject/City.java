@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 public class City extends Point2D.Float implements Xmlable, Geometry2D {
     private int radius;
     private String color, name;
+    private boolean isolated = false;
 
     public City(String name, int x, int y, int radius, String color) {
         super(x, y);
@@ -32,6 +33,10 @@ public class City extends Point2D.Float implements Xmlable, Geometry2D {
     public Point2D.Float getLocation() { return new Point2D.Float((float)getX(), (float)getY());}
 
     public int getType() { return 0; }
+
+    public boolean isIsolated() { return this.isolated; }
+
+    public void setIsolated(boolean value) { this.isolated = value; }
 
     public Element toXml() {
         String[] names = {"name", "x", "y", "radius", "color"};

@@ -1,38 +1,41 @@
 package cmsc420.meeshquest.part2.Structures.Spatial.PMQuadtree;
 
+import cmsc420.geom.Circle2D;
 import cmsc420.geom.Geometry2D;
 import cmsc420.meeshquest.part2.DataObject.City;
 import cmsc420.meeshquest.part2.DataObject.Road;
 import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Element;
-import org.w3c.dom.css.Rect;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.TreeSet;
+import java.awt.geom.Rectangle2D;
+import java.util.*;
+import java.util.List;
 
 import static cmsc420.geom.Inclusive2DIntersectionVerifier.intersects;
+import static java.lang.Math.*;
 
 public abstract class PMQuadtree implements Xmlable {
-    private int width, height, size;
+    private int size;
+    private Rectangle2D map;
     private Validator V;
+    String type;
     private Node root;
     private final White White = new White();
 
     static abstract class Node {
         final int NW = 0, NE = 1, SW = 2, SE = 3;
-        abstract Node map(Geometry2D g);
+        abstract Node map(Geometry2D g, Rectangle2D view);
         Node unmap(Geometry2D g) { throw new NotImplementedException(); }
         abstract boolean contains(Geometry2D g);
         abstract Element toXml();
     }
 
     class White extends Node {
-        Node map(Geometry2D g) {
+        Node map(Geometry2D g, Rectangle2D view) {
             return new Black(g);
         }
 
@@ -45,25 +48,44 @@ public abstract class PMQuadtree implements Xmlable {
         }
     }
 
-    class Grey extends Node {
-        Node[] children = new Node[4];
-        Rectangle[] quads = new Rectangle[4];
+    class Gray extends Node {
+        final Node[] children = new Node[]{White, White, White, White};
+        final Rectangle2D.Float[] quads = new Rectangle2D.Float[4];
+        final Rectangle2D area;
 
-        Grey() {
-
+        Gray(Rectangle2D area) {
+            this.area = area;
+            int x = (int) area.getX(), y = (int) area.getY(), w = (int) area.getWidth() / 2, h = (int) area.getHeight() / 2;
+            quads[NW] = new Rectangle2D.Float(x, (y + h), w, h);
+            quads[NE] = new Rectangle2D.Float((x + w), (y + h), w, h);
+            quads[SW] = new Rectangle2D.Float(x, y, w, h);
+            quads[SE] = new Rectangle2D.Float((x + w), y, w, h);
         }
 
-        Node map(Geometry2D g) {
-            return null;
+        @Override
+        Node map(Geometry2D g, Rectangle2D view) {
+            for (int quad = NW; quad <= SE; quad++) {
+                boolean geoInsideQuadrant = inside(g, quad);
+                if (geoInsideQuadrant) children[quad] = children[quad].map(g, quads[quad]);
+            }
+            return this;
+        }
+
+        private boolean inside(Geometry2D g, Rectangle2D quad) {
+            return (g instanceof City)
+                    ? intersects((City)g, quad)
+                    : intersects((Road)g, quad);
+        }
+
+        private boolean inside(Geometry2D g, int quad) {
+            return inside(g, quads[quad]);
         }
 
         boolean contains(Geometry2D g) {
-            Point2D vertex = ((City)g).getLocation();
-            int Q = SE;
-            if (intersects(vertex, quads[NW])) Q = NW;
-            else if (intersects(vertex, quads[NE])) Q = NE;
-            else if (intersects(vertex, quads[SW])) Q = SW;
-            return children[Q].contains(g);
+            for (int quad = NW; quad <= SE; quad++) {
+                if (inside(g, quad)) return children[quad].contains(g);
+            }
+            return false;
         }
 
         Element toXml() {
@@ -79,18 +101,31 @@ public abstract class PMQuadtree implements Xmlable {
 
     class Black extends Node {
         City city;
-        TreeSet<Road> roads;
+        TreeSet<Road> roads = new TreeSet<>();
 
         Black (Geometry2D g) {
             if (g instanceof City) this.city = (City)g;
-            else {
-                if (roads == null) roads = new TreeSet<>();
-                roads.add((Road)g);
-            }
+            else roads.add((Road)g);
         }
 
-        Node map(Geometry2D g) {
-            return null;
+        Node map(Geometry2D g, Rectangle2D view) {
+            return (g instanceof City)
+                    ? map((City)g, view)
+                    : map((Road)g, view);
+        }
+
+        private Node map(City newCity, Rectangle2D view) {
+            Node next = this;
+            if (this.city != null) {
+                next = new Gray(view).map(newCity, null).map(this.city, view);
+                for (Road r : roads) next.map(r, view);
+            } else this.city = newCity;
+
+            return next;
+        }
+        private Node map(Road newRoad, Rectangle2D view) {
+            roads.add(newRoad);
+            return this;
         }
 
         boolean contains(Geometry2D g) {
@@ -100,8 +135,8 @@ public abstract class PMQuadtree implements Xmlable {
 
         Element toXml() {
             int cardinality = roads.size() + ((city == null) ? 0 : 1);
-            Element black = getBuilder().createElement("black");
 
+            Element black = getBuilder().createElement("black");
             black.setAttribute("cardinality", Integer.toString(cardinality));
             black.appendChild(city.toXml());
 
@@ -113,35 +148,43 @@ public abstract class PMQuadtree implements Xmlable {
     }
 
     public PMQuadtree(int width, int height) {
-        this.width = width;
-        this.height = height;
+        map = new Rectangle(0, 0, width, height);
         root = new White();
     }
+
     public boolean inRange(Point2D point) {
-        return point.getX() <= width && point.getY() < height;
+        return map.contains(point);
     }
+
+    public boolean inRange(Line2D line) {
+        return map.contains(line.getP1()) && map.contains(line.getP2());
+    }
+
     public int size() {
         return size;
     }
+
     public boolean isEmpty() {
         return size == 0;
     }
-    public boolean contains(City city) {
-        throw new NotImplementedException();
-    }
-    public boolean contains(Road road) {
-        throw new NotImplementedException();
+
+    public boolean contains(Geometry2D g) {
+        return root.contains(g);
     }
 
     public boolean mapCity(City city) {
-        root = root.map(city);
+        root = root.map(city, map);
+        size++;
+        return true;
     }
 
     public boolean mapRoad(Road road) {
-        throw new NotImplementedException();
+        root = root.map(road, map);
+        return true;
     }
 
     public void clear() {
+        size = 0;
         root = White;
     }
 
@@ -158,22 +201,58 @@ public abstract class PMQuadtree implements Xmlable {
     }
 
     //Most likely will be iterative solutions
-    public ArrayList<City> rangeCities(Point2D.Float here, int radius) {
+    public List<City> rangeCities(Point2D.Float center, int radius) {
+        LinkedList<City> inRange = new LinkedList<>();
+        Circle2D.Double searchCircle = new Circle2D.Double(center.getX(), center.getY(), radius);
+        LinkedList<Node> Queue = new LinkedList<>();
+        Queue.add(root);
+        while (!Queue.isEmpty()) {
+            Node current = Queue.poll();
+            if (current instanceof Gray) {
+                Gray gray = (Gray)current;
+                if (intersects(gray.area, searchCircle))
+                    Queue.addAll( Arrays.asList(gray.children));
+            } else if (current instanceof Black) {
+                Black black = (Black)current;
+                if (black.city != null && !inRange.contains(black.city) && intersects(black.city.getLocation(), searchCircle))
+                    inRange.add(black.city);
+            }
+        }
+        return inRange;
+    }
+
+    public List<Road> rangeRoads(Point2D.Float center, int radius) {
+        LinkedList<Road> inRange = new LinkedList<>();
+        Circle2D.Double searchCircle = new Circle2D.Double(center.getX(), center.getY(), radius);
+        LinkedList<Node> Queue = new LinkedList<>();
+
+        Queue.add(root);
+        while (!Queue.isEmpty()) {
+            Node current = Queue.poll();
+            if (current instanceof Gray) {
+                Gray gray = (Gray)current;
+                if (intersects(gray.area, searchCircle))
+                    Queue.addAll( Arrays.asList(gray.children));
+            } else if (current instanceof Black) {
+                Black black = (Black)current;
+                for (Road r : black.roads) {
+                    if (!inRange.contains(r) && circleIntersect(searchCircle, r))
+                        inRange.add(r);
+                }
+            }
+        }
+        return inRange;
+    }
+    public City nearestCity(Point2D.Float center) {
         throw new NotImplementedException();
     }
-    public ArrayList<Road> rangeRoads(Point2D.Float here, int radius) {
+    public City nearestIsolatedCity(Point2D.Float center) {
         throw new NotImplementedException();
     }
-    public City nearestCity(Point2D.Float here) {
+    public Road nearestRoad(Point2D.Float center) {
         throw new NotImplementedException();
     }
-    public City nearestIsolatedCity(Point2D.Float here) {
-        throw new NotImplementedException();
-    }
-    public Road nearestRoad(Point2D.Float here) {
-        throw new NotImplementedException();
-    }
-    public City nearestCityToRoad(Point2D.Float here) {
+    public City nearestCityToRoad(Point2D.Float center) {
         throw new NotImplementedException();
     }
     public Element shortestPath(City start, City end) {
@@ -181,7 +260,21 @@ public abstract class PMQuadtree implements Xmlable {
     }
 
     public Element toXml() {
-        return root.toXml();
+        Element quadtree = getBuilder().createElement("quadtree");
+        quadtree.setAttribute("order", this.type);
+        quadtree.appendChild(root.toXml());
+        return quadtree;
+    }
+
+    private boolean circleIntersect(Circle2D c, Line2D l) {
+        Point2D start = l.getP1(), end = l.getP2(), center = c.getCenter();
+        Double radius = c.getRadius(), cX = center.getX(), cY = center.getY(),
+                x1 = start.getX(), x2 = end.getX(), y1 = start.getY(), y2 = end.getY();
+
+        Double distance =
+                ( abs((y2 - y1)*cX - (x2 - x1)*cY + x2*y1 - y2*x1) ) / sqrt( pow((y2-y1), 2) + pow((x2 - x1), 2) );
+        return distance <= radius;
+
     }
 
 }

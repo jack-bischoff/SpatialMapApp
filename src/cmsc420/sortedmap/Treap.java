@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part2.Structures.Dictionary;
+package cmsc420.sortedmap;
 
 import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Element;
@@ -6,7 +6,8 @@ import org.w3c.dom.Element;
 import java.util.*;
 
 public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmlable {
-    private Node root = new Empty();
+    private Node root;
+    private final Node Empty = new Empty();
     private int size = 0, modCount = 0;
     private Comparator<K> comparator = new Comparator<K>(){
         public int compare(K o1, K o2) {
@@ -45,8 +46,8 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
         public Node(K key, V value) {
             super(key, value);
             priority = random.nextInt();
-            left = new Empty();
-            right = new Empty();
+            left =  Empty;
+            right = Empty;
         }
         Node() {
             super(null, null);
@@ -104,10 +105,27 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
             node.appendChild(left.toXml());
             return node;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Map.Entry))
+                return false;
+            Map.Entry<K, V> me = (Map.Entry<K,V>)o;
+            return this.getKey().equals(me.getKey()) && this.getValue().equals(me.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            return getKey().hashCode() ^ getValue().hashCode();
+        }
     }
 
-    public Treap() { }
+    public Treap() {
+        root = Empty;
+    }
+
     public Treap (Comparator<K> comparator) {
+        this();
         this.comparator = comparator;
     }
 
@@ -134,6 +152,7 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
     }
 
     public boolean containsKey(Object key) {
+        if (key == null) throw new NullPointerException();
         return root.containsKey((K)key);
     }
     public Comparator<? super K> comparator() {
@@ -141,6 +160,8 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
     }
 
     public void clear() {
+        size = 0;
+        modCount = 0;
         root = new Empty();
     }
     public K firstKey() {
@@ -265,6 +286,11 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                 return Treap.this.comparator();
             }
 
+            @Override
+            public V put(K key, V value) {
+                return Treap.this.put(key, value);
+            }
+
             public SortedMap<K, V> subMap(K fromKey, K toKey) {
                 if (comparator().compare(fromKey, this.from) < 0 || comparator().compare(toKey, this.to) > 0) {
                     throw new IllegalArgumentException("from or to lies outside of range");
@@ -297,7 +323,8 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
         }
         return new SubMap(fromKey, toKey);
     }
-//do not need to implement
+
+    //do not need to implement
     public SortedMap<K,V> headMap(K toKey) {throw new UnsupportedOperationException();}
     public SortedMap<K,V> tailMap(K fromKey) {throw new UnsupportedOperationException();}
     public Set<K> keySet() {throw new UnsupportedOperationException();}

@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part2.Structures.Spatial;
+package cmsc420.meeshquest.part2.Structures.Spatial.PRQuadTree;
 
 import cmsc420.geom.Circle2D;
 import cmsc420.geom.Inclusive2DIntersectionVerifier;

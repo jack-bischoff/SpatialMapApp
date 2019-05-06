@@ -8,6 +8,7 @@ import org.w3c.dom.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.List;
 
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
 //TODO: Extend Response object to handle output, naming...
@@ -23,14 +24,13 @@ public class CommandMiddleware {
         this.spatialMap = new CitySpatialMap(width, height);
     }
 
-    private Element cityListBuilder(Iterable<City> cities) {
-        Element cityList = builder.createElement("cityList");
-        for (City city : cities) {
-            cityList.appendChild(city.toXml());
+    private Element listBuilder(List<Xmlable> lst, String name) {
+        Element listTag = builder.createElement(name);
+        for (Xmlable x : lst) {
+            listTag.appendChild(x.toXml());
         }
-        return cityList;
+        return listTag;
     }
-
 
     Result createCity(Parameters params)  {
         String
@@ -54,7 +54,7 @@ public class CommandMiddleware {
 
         if (res.error)
             return new Failure(res.payload);
-        return new Success(cityListBuilder((Iterable<City>)res.payload));
+        return new Success(listBuilder((List<Xmlable>)res.payload, "cityList"));
     }
 
     Result clearAll() {
@@ -85,6 +85,15 @@ public class CommandMiddleware {
         return new Success(output);
     }
 
+    Result printTreap() {
+        if (cityDictionary.isEmpty())
+            return new Failure(Fault.emptyTree);
+
+        return new Success(cityDictionary.print());
+    }
+
+
+    //////////////////////SPATIAL COMMANDS/////////////////////
     Result mapCity(Parameters params) {
         String name = params.get("name");
 
@@ -112,6 +121,22 @@ public class CommandMiddleware {
         return new Success();
     }
 
+    Result mapRoad(Parameters params) {
+        City start = cityDictionary.get(params.get("start")), end = cityDictionary.get(params.get("end"));
+        if (start == null) return new Failure(Fault.startPointDoesNotExist);
+        if (end == null) return new Failure(Fault.endPointDoesNotExist);
+        if (start.isIsolated() || end.isIsolated()) return new Failure(Fault.startOrEndIsIsolated);
+        if (start.equals(end)) return new Failure(Fault.startEqualsEnd);
+        //a few more need to be handled later
+        Response res = spatialMap.mapRoad(new Road(start, end));
+        if (res.error)
+            return new Failure(res.payload);
+
+        Element Road = ((Road)res.payload).toXml();
+        builder.renameNode(Road, null, "roadCreated");
+        return new Success(Road);
+    }
+
     Result saveMap(Parameters params) throws IOException {
         return saveMap(params.get("name"));
     }
@@ -121,15 +146,13 @@ public class CommandMiddleware {
         return new Success();
     }
 
-    Result printPRQuadTree() {
-        Response res = spatialMap.printPRQuadTree();
+    Result printPMQuadTree() {
+        Response res = spatialMap.print();
         if (res.error)
             return new Failure(res.payload);
-
-        Element tree = builder.createElement("quadtree");
-        tree.appendChild((Element)res.payload);
-        return new Success(tree);
+        return new Success((Element)res.payload);
     }
+
     Result nearestCity(Parameters params) {
        Point2D.Float point = new Point2D.Float(
                        Integer.parseInt(params.get("x")),
@@ -155,6 +178,22 @@ public class CommandMiddleware {
         if (res.error)
             return new Failure(res.payload);
 
-        return new Success(cityListBuilder((Iterable<City>) res.payload));
+        return new Success(listBuilder((List<Xmlable>)res.payload, "cityList"));
+    }
+
+    Result rangeRoads(Parameters params) throws IOException {
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("y"));
+        int radius = Integer.parseInt(params.get("radius"));
+
+        Response res = spatialMap.rangeRoads(x, y, radius);
+        if (params.get("saveMap") != null) {
+            VisualMap.VisualMap().addCircle(x, y, radius, Color.BLUE,false);
+            saveMap(params.get("saveMap"));
+        }
+        if (res.error)
+            return new Failure(res.payload);
+
+        return new Success(listBuilder((List<Xmlable>)res.payload, "roadList"));
     }
 }

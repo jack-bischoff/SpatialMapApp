@@ -20,8 +20,8 @@ public class MeeshQuest {
     	Document results = null;
     	CommandMiddleware mw;
         try {
-            Document doc = XmlUtility.validateNoNamespace(new File("./xmltest/part2.input.xml"));
-        	//Document doc = XmlUtility.validateNoNamespace(System.in);
+            Document doc = XmlUtility.validateNoNamespace(new File("./xmltests/part2.public.range.input.xml"));
+//        	Document doc = XmlUtility.validateNoNamespace(System.in);
             results = XmlBuilder.getBuilder();
         	Element Root = results.createElement("results");
         	Element commandNode = doc.getDocumentElement();
@@ -53,6 +53,9 @@ public class MeeshQuest {
                             params = new Parameters(attrs, new String[]{"sortBy"});
                             Output = mw.listCities(params);
                             break;
+                        case "printTreap":
+                            Output = mw.printTreap();
+                            break;
                         case "clearAll":
                             Output = mw.clearAll();
                             break;
@@ -64,17 +67,24 @@ public class MeeshQuest {
                             params = new Parameters(attrs, new String[]{"name"});
                             Output = mw.unmapCity(params);
                             break;
-                        case "printPRQuadtree":
-                            Output = mw.printPRQuadTree();
+                        case "mapRoad":
+                            params = new Parameters(attrs, new String[]{"start", "end"});
+                            Output = mw.mapRoad(params);
+                            break;
+                        case "printPMQuadtree":
+                            Output = mw.printPMQuadTree();
                             break;
                         case "saveMap":
                             params = new Parameters(attrs, new String[]{"name"});
                             Output = mw.saveMap(params);
                             break;
                         case "rangeCities":
-                            //figure out optional param saveMap
                             params = new Parameters(attrs, new String[]{"x", "y", "radius", "saveMap"});
                             Output = mw.rangeCities(params);
+                            break;
+                        case "rangeRoads":
+                            params = new Parameters(attrs, new String[]{"x", "y", "radius", "saveMap"});
+                            Output = mw.rangeRoads(params);
                             break;
                         case "nearestCity":
                             params = new Parameters(attrs, new String[]{"x", "y"});

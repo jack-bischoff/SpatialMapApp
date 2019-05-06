@@ -11,9 +11,9 @@ import java.awt.geom.Rectangle2D;
 import static java.lang.Math.abs;
 
 public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparable {
-    City end, start;
+    private City start, end;
 
-    Road(City end, City start) {
+    public Road(City start, City end) {
         this.end = end;
         this.start = start;
     }
@@ -24,6 +24,10 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparabl
         road.setAttribute("start", this.start.getName());
         return road;
     }
+
+    public City getStart() { return  start; }
+
+    public City getEnd() { return end; }
 
     public int getType() {
         return 1;
@@ -59,6 +63,22 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparabl
 
     public Rectangle2D getBounds2D() {
         return new Rectangle2D.Double(start.getX(), start.getY(),abs(end.getX() - start.getX()),abs(end.getY()- start.getY()));
+    }
+
+    public double length() {
+        return this.end.getLocation().distance(this.start.getLocation());
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof Road)) return false;
+        Road other = (Road)obj;
+        if (other == this) return true;
+        return (
+                ( other.getEnd().equals(this.getEnd()) && other.getStart().equals(this.getStart()) )
+                ||
+                ( other.getEnd().equals(this.getStart()) && other.getStart().equals(this.getEnd()) )
+        );
     }
 
     public int compareTo(Object o) {
