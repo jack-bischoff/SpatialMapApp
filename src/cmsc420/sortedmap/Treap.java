@@ -1,8 +1,11 @@
 package cmsc420.meeshquest.part2.Structures.Dictionary;
 
+import cmsc420.meeshquest.part2.Xmlable;
+import org.w3c.dom.Element;
+
 import java.util.*;
 
-public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
+public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmlable {
     private Node root = new Empty();
     private int size = 0, modCount = 0;
     private Comparator<K> comparator = new Comparator<K>(){
@@ -15,7 +18,7 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
     };
     private static Random random = new Random();
 
-    private class Empty extends Node {
+    private class Empty extends Node implements Xmlable {
         private Empty() {
             super();
         }
@@ -30,8 +33,12 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
         K firstKey() { throw new NoSuchElementException();}
         K lastKey() { throw new NoSuchElementException();}
         ArrayList<Entry<K, V>> toArray(ArrayList<Entry<K, V>> acc) { return acc; }
+
+        public Element toXml() {
+            return getBuilder().createElement("emptyChild");
+        }
     }
-    private class Node extends AbstractMap.SimpleEntry<K,V> implements SortedMap.Entry<K,V> {
+    private class Node extends AbstractMap.SimpleEntry<K,V> implements SortedMap.Entry<K,V>, Xmlable {
         private Node left, right;
         private int priority;
 
@@ -47,7 +54,7 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
 
         Node put(K keyToAdd, V valueToAdd) {
             Node result = this;
-            if (comparator.compare(this.getKey(), keyToAdd) == -1) {
+            if (comparator.compare(this.getKey(), keyToAdd) > 0) {
                 left = left.put(keyToAdd, valueToAdd);
                 if (left.priority > this.priority) {
                     result = left;
@@ -68,15 +75,15 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
         boolean containsKey(K key) {
             if (key.equals(this.getKey())) return true;
             return (comparator.compare(this.getKey(), key) < 0)
-                    ? left.containsKey(key)
-                    : right.containsKey(key);
+                    ? right.containsKey(key)
+                    : left.containsKey(key);
         }
 
         V get(K key) {
             if (this.getKey() == key || this.getKey().equals(key)) return this.getValue();
             return (comparator.compare(this.getKey(), key) < 0)
-                    ? left.get(key)
-                    : right.get(key);
+                    ? right.get(key)
+                    : left.get(key);
 
         }
 
@@ -88,6 +95,15 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
 
         K firstKey() { return (left instanceof Treap.Empty) ? this.getKey() : left.firstKey(); }
         K lastKey() { return (right instanceof Treap.Empty) ? this.getKey() : right.lastKey();}
+
+        public Element toXml() {
+            Element node = getBuilder().createElement("node");
+            node.setAttribute("key", this.getKey().toString());
+            node.setAttribute("priority", Integer.toString(priority));
+            node.appendChild(right.toXml());
+            node.appendChild(left.toXml());
+            return node;
+        }
     }
 
     public Treap() { }
@@ -113,6 +129,10 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
         return size == 0;
     }
 
+    public int size() {
+        return size;
+    }
+
     public boolean containsKey(Object key) {
         return root.containsKey((K)key);
     }
@@ -131,6 +151,13 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V> {
     }
     public Map.Entry<K,V>[] toArray() {
         return root.toArray(new ArrayList<>()).toArray(new Map.Entry[0]);
+    }
+
+    public Element toXml() {
+        Element treap = getBuilder().createElement("treap");
+        treap.setAttribute("cardinality", Integer.toString(this.size));
+        treap.appendChild(this.root.toXml());
+        return treap;
     }
     public Set<Entry<K, V>> entrySet() {
         return new AbstractSet<Entry<K, V>>() {
