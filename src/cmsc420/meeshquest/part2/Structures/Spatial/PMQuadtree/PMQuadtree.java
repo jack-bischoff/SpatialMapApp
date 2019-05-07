@@ -32,6 +32,7 @@ public abstract class PMQuadtree implements Xmlable {
         Node unmap(Geometry2D g) { throw new NotImplementedException(); }
         abstract boolean contains(Geometry2D g);
         abstract Element toXml();
+        abstract double distance(Point2D to);
     }
 
     class White extends Node {
@@ -45,6 +46,10 @@ public abstract class PMQuadtree implements Xmlable {
 
         Element toXml() {
             return getBuilder().createElement("white");
+        }
+
+        double distance(Point2D to) {
+            return Integer.MAX_VALUE;
         }
     }
 
@@ -97,6 +102,10 @@ public abstract class PMQuadtree implements Xmlable {
 
             return gray;
         }
+
+        double distance(Point2D to) {
+            return to.distance(area.getCenterX(), area.getCenterY());
+        }
     }
 
     class Black extends Node {
@@ -138,12 +147,17 @@ public abstract class PMQuadtree implements Xmlable {
 
             Element black = getBuilder().createElement("black");
             black.setAttribute("cardinality", Integer.toString(cardinality));
-            black.appendChild(city.toXml());
+            if (city != null) black.appendChild(city.toXml());
 
             for (Road r : roads.descendingSet())
                 black.appendChild(r.toXml());
 
             return black;
+        }
+
+        double distance(Point2D to) {
+            if (city != null) return city.getLocation().distance(to);
+            return Integer.MAX_VALUE;
         }
     }
 
@@ -244,7 +258,32 @@ public abstract class PMQuadtree implements Xmlable {
         return inRange;
     }
     public City nearestCity(Point2D.Float center) {
-        throw new NotImplementedException();
+        PriorityQueue<Node> minHeap = new PriorityQueue<>(new Comparator<Node>() {
+            public int compare(Node o1, Node o2) {
+                double dist1 = o1.distance(center);
+                double dist2 = o2.distance(center);
+                if (dist1 < dist2) return -1;
+                else if (dist1 > dist2) return 1;
+                if (o1 instanceof Black && o2 instanceof Black)
+                    return -1 * ((Black) o1).city.getName().compareTo(((Black) o2).city.getName());
+
+                return 0;
+            }
+        });
+
+        minHeap.add(root);
+        while (!minHeap.isEmpty()) {
+            Node current = minHeap.poll();
+            if (current instanceof Black)
+                return ((Black) current).city;
+            else if (current instanceof Gray)
+                for (Node child : ((Gray) current).children) {
+                    if (child instanceof Gray) minHeap.add(child);
+                    if (child instanceof Black && ((Black) child).city != null && !((Black) child).city.isIsolated())
+                        minHeap.add(child);
+                }
+        }
+        return null;
     }
     public City nearestIsolatedCity(Point2D.Float center) {
         throw new NotImplementedException();

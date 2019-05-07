@@ -23,21 +23,21 @@ public class CitySpatialMap {
     }
 
     public boolean contains(City city) {
-        return spatialMap.contains(city);
+        return graph.containsKey(city);
     }
-    public boolean contains(Road road) { return spatialMap.contains(road); }
+    public boolean contains(Road road) { return graph.hasEdge(road); }
     public void clearAll() {
         this.spatialMap.clear();
     }
 
     public Response mapCity(City city){
-        if (spatialMap.contains(city))
+        if (graph.containsKey(city))
             return new Response(true, Fault.cityAlreadyMapped);
         if (!spatialMap.inRange(city.getLocation()))
             return new Response(true, Fault.cityOutOfBounds);
 
         city.setIsolated(true);
-        graph.add(city.getName());
+        graph.add(city);
         this.spatialMap.mapCity(city);
         VisualMap.VisualMap().addPoint(city.getName(), city.getX(), city.getY());
         return new Response();
@@ -59,9 +59,9 @@ public class CitySpatialMap {
         if (!spatialMap.inRange(road))
             return new Response(true, Fault.roadOutOfBounds);
 
-        if (!graph.containsKey(road.getStart().getName()))
+        if (!graph.containsKey(road.getStart()))
             spatialMap.mapCity(road.getStart());
-        if (!graph.containsKey(road.getEnd().getName()))
+        if (!graph.containsKey(road.getEnd()))
             spatialMap.mapCity(road.getEnd());
 
         graph.addEdge(road);
@@ -80,7 +80,7 @@ public class CitySpatialMap {
 
     public Response nearestCity (Point2D.Float nearestTo) {
         if (spatialMap.isEmpty())
-            return new Response(true, Fault.mapIsEmpty);
+            return new Response(true, Fault.cityNotFound);
 
         City c = spatialMap.nearestCity(nearestTo);
         if (c == null)

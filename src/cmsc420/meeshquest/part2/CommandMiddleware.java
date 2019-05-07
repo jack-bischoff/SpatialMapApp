@@ -96,12 +96,11 @@ public class CommandMiddleware {
     //////////////////////SPATIAL COMMANDS/////////////////////
     Result mapCity(Parameters params) {
         String name = params.get("name");
-
-        City city = cityDictionary.get(name);
-        if (city == null)
+        if (!cityDictionary.contains(name))
             return new Failure(Fault.nameNotInDictionary);
-
-        Response res = spatialMap.mapCity(city);
+        City c = cityDictionary.get(name);
+        c.setIsolated(true);
+        Response res = spatialMap.mapCity(c);
         if (res.error)
             return new Failure(res.payload);
         return new Success();
@@ -127,7 +126,7 @@ public class CommandMiddleware {
         if (end == null) return new Failure(Fault.endPointDoesNotExist);
         if (start.isIsolated() || end.isIsolated()) return new Failure(Fault.startOrEndIsIsolated);
         if (start.equals(end)) return new Failure(Fault.startEqualsEnd);
-        //a few more need to be handled later
+
         Response res = spatialMap.mapRoad(new Road(start, end));
         if (res.error)
             return new Failure(res.payload);
