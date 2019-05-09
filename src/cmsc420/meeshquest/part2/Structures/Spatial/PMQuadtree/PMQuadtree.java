@@ -2,6 +2,7 @@ package cmsc420.meeshquest.part2.Structures.Spatial.PMQuadtree;
 
 import cmsc420.geom.Circle2D;
 import cmsc420.geom.Geometry2D;
+import cmsc420.meeshquest.part2.Comparators.RoadDescendingOrder;
 import cmsc420.meeshquest.part2.DataObject.City;
 import cmsc420.meeshquest.part2.DataObject.Road;
 import cmsc420.meeshquest.part2.Xmlable;
@@ -32,7 +33,8 @@ public abstract class PMQuadtree implements Xmlable {
         Node unmap(Geometry2D g) { throw new NotImplementedException(); }
         abstract boolean contains(Geometry2D g);
         abstract Element toXml();
-        abstract double distance(Point2D to);
+        abstract double distanceCity(Point2D to);
+        abstract double distanceRoad(Point2D to);
     }
 
     class White extends Node {
@@ -48,9 +50,11 @@ public abstract class PMQuadtree implements Xmlable {
             return getBuilder().createElement("white");
         }
 
-        double distance(Point2D to) {
-            return Integer.MAX_VALUE;
+        double distanceCity(Point2D to) {
+            return Double.MAX_VALUE;
         }
+        double distanceRoad(Point2D to) { return Double.MAX_VALUE; }
+
     }
 
     class Gray extends Node {
@@ -95,22 +99,21 @@ public abstract class PMQuadtree implements Xmlable {
 
         Element toXml() {
             Element gray = getBuilder().createElement("gray");
-            gray.setAttribute("x", Double.toString(quads[NW].getX()));
-            gray.setAttribute("y", Double.toString(quads[NW].getY()));
+            gray.setAttribute("x", Integer.toString((int)area.getCenterX()));
+            gray.setAttribute("y", Integer.toString((int)area.getCenterY()));
             for (Node child : children)
                 gray.appendChild(child.toXml());
 
             return gray;
         }
 
-        double distance(Point2D to) {
-            return to.distance(area.getCenterX(), area.getCenterY());
-        }
+        double distanceCity(Point2D to) { return to.distance(area.getCenterX(), area.getCenterY()); }
+        double distanceRoad(Point2D to) { return to.distance(area.getCenterX(), area.getCenterY());}
     }
 
     class Black extends Node {
         City city;
-        TreeSet<Road> roads = new TreeSet<>();
+        HashSet<Road> roads = new HashSet<>();
 
         Black (Geometry2D g) {
             if (g instanceof City) this.city = (City)g;
@@ -149,16 +152,38 @@ public abstract class PMQuadtree implements Xmlable {
             black.setAttribute("cardinality", Integer.toString(cardinality));
             if (city != null) black.appendChild(city.toXml());
 
-            for (Road r : roads.descendingSet())
-                black.appendChild(r.toXml());
+            Road[] descending = roads.toArray(new Road[0]);
+            Arrays.sort(descending, new RoadDescendingOrder());
+            for (Road r : descending)
+                black.appendChild(r.toXmlReverse());
 
             return black;
         }
 
-        double distance(Point2D to) {
+        double distanceCity(Point2D to) {
             if (city != null) return city.getLocation().distance(to);
             return Integer.MAX_VALUE;
         }
+
+        double distanceRoad(Point2D to) {
+            if (!roads.isEmpty())
+                return minRoad(to).ptSegDist(to);
+            return Double.MAX_VALUE;
+        }
+
+        Road minRoad(Point2D center) {
+            Road min = null;
+            double dist, minDist = Double.MAX_VALUE;
+            for (Road road : roads) {
+                dist = road.ptSegDist(center);
+                if (dist < minDist) {
+                    minDist = dist;
+                    min = road;
+                }
+            }
+            return min;
+        }
+
     }
 
     public PMQuadtree(int width, int height) {
@@ -257,44 +282,50 @@ public abstract class PMQuadtree implements Xmlable {
         }
         return inRange;
     }
-    public City nearestCity(Point2D.Float center) {
-        PriorityQueue<Node> minHeap = new PriorityQueue<>(new Comparator<Node>() {
-            public int compare(Node o1, Node o2) {
-                double dist1 = o1.distance(center);
-                double dist2 = o2.distance(center);
-                if (dist1 < dist2) return -1;
-                else if (dist1 > dist2) return 1;
-                if (o1 instanceof Black && o2 instanceof Black)
-                    return -1 * ((Black) o1).city.getName().compareTo(((Black) o2).city.getName());
 
-                return 0;
-            }
-        });
+    public City nearestCity(Point2D center, boolean isolated) {
+        PriorityQueue<Node> minHeap = new PriorityQueue<>(new PointDistanceComparator(center));
 
         minHeap.add(root);
         while (!minHeap.isEmpty()) {
             Node current = minHeap.poll();
-            if (current instanceof Black)
+            if (current instanceof Black && ((Black) current).city != null)
                 return ((Black) current).city;
             else if (current instanceof Gray)
                 for (Node child : ((Gray) current).children) {
                     if (child instanceof Gray) minHeap.add(child);
-                    if (child instanceof Black && ((Black) child).city != null && !((Black) child).city.isIsolated())
+                    if (child instanceof Black && ((Black) child).city != null && ((Black) child).city.isIsolated() == isolated)
                         minHeap.add(child);
                 }
         }
         return null;
     }
-    public City nearestIsolatedCity(Point2D.Float center) {
-        throw new NotImplementedException();
+
+    public City nearestCity(Point2D center) {
+        return nearestCity(center, false);
     }
-    public Road nearestRoad(Point2D.Float center) {
-        throw new NotImplementedException();
+
+    public City nearestIsolatedCity(Point2D center) {
+        return nearestCity(center, true);
     }
-    public City nearestCityToRoad(Point2D.Float center) {
-        throw new NotImplementedException();
+
+    public Road nearestRoad(Point2D center) {
+        PriorityQueue<Node> minHeap = new PriorityQueue<>(new RoadDistanceComparator(center));
+
+        minHeap.add(root);
+        while (!minHeap.isEmpty()) {
+            Node current = minHeap.poll();
+            if (current instanceof Black)
+                return ((Black)current).minRoad(center);
+            else if (current instanceof Gray)
+                for (Node child : ((Gray) current).children)
+                    if (child instanceof Gray) minHeap.add(child);
+                    else if (child instanceof Black && !((Black) child).roads.isEmpty()) minHeap.add(child);
+        }
+        return null;
     }
-    public Element shortestPath(City start, City end) {
+
+    public City nearestCityToRoad(Road road) {
         throw new NotImplementedException();
     }
 
@@ -305,6 +336,7 @@ public abstract class PMQuadtree implements Xmlable {
         return quadtree;
     }
 
+    //Helper methods and Comparators
     private boolean circleIntersect(Circle2D c, Line2D l) {
         Point2D start = l.getP1(), end = l.getP2(), center = c.getCenter();
         Double radius = c.getRadius(), cX = center.getX(), cY = center.getY(),
@@ -314,6 +346,40 @@ public abstract class PMQuadtree implements Xmlable {
                 ( abs((y2 - y1)*cX - (x2 - x1)*cY + x2*y1 - y2*x1) ) / sqrt( pow((y2-y1), 2) + pow((x2 - x1), 2) );
         return distance <= radius;
 
+    }
+
+    private class PointDistanceComparator implements Comparator<Node> {
+        private Point2D center;
+        PointDistanceComparator(Point2D center) {
+            this.center = center;
+        }
+        public int compare(Node o1, Node o2) {
+            double dist1 = o1.distanceCity(center);
+            double dist2 = o2.distanceCity(center);
+            if (dist1 < dist2) return -1;
+            else if (dist1 > dist2) return 1;
+            else if (dist1 == dist2 && o1 instanceof Black && o2 instanceof Black)
+                return -1 * ((Black) o1).city.getName().compareTo(((Black) o2).city.getName());
+
+            return 0;
+        }
+    }
+
+    private class RoadDistanceComparator implements Comparator<Node> {
+        private Point2D center;
+        RoadDistanceComparator(Point2D center) {
+            this.center = center;
+        }
+
+        public int compare(Node o1, Node o2) {
+            double dist1 = o1.distanceRoad(center);
+            double dist2 = o2.distanceRoad(center);
+            if (dist1 < dist2) return -1;
+            else if (dist1 > dist2) return 1;
+            else if (o1 instanceof Black && o2 instanceof Black)
+                return new RoadDescendingOrder().compare( ((Black) o1).minRoad(center), ((Black) o2).minRoad(center));
+            return 0;
+        }
     }
 
 }

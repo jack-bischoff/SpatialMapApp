@@ -14,6 +14,10 @@ public class Success extends Result implements Xmlable {
         super(output);
     }
 
+    public Success(Xmlable output) {
+        this(output.toXml());
+    }
+
     public Element toXml() {
         Document builder = getBuilder();
         Element Status = builder.createElement("success");

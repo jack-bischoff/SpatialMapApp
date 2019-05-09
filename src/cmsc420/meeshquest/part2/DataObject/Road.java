@@ -1,6 +1,7 @@
 package cmsc420.meeshquest.part2.DataObject;
 
 import cmsc420.geom.Geometry2D;
+import cmsc420.meeshquest.part2.Comparators.CityDescendingOrder;
 import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Element;
 
@@ -10,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 
 import static java.lang.Math.abs;
 
-public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparable {
+public class Road extends Line2D.Float implements Xmlable, Geometry2D {
     private City start, end;
 
     public Road(City start, City end) {
@@ -20,8 +21,21 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparabl
 
     public Element toXml() {
         Element road = getBuilder().createElement("road");
-        road.setAttribute("end", this.end.getName());
-        road.setAttribute("start", this.start.getName());
+        String end = this.end.getName(), start = this.start.getName();
+        road.setAttribute("end", end);
+        road.setAttribute("start", start);
+        return road;
+    }
+
+    public Element toXmlReverse() {
+        Element road = getBuilder().createElement("road");
+        String end = this.end.getName(), start = this.start.getName();
+        if (end.compareTo(start) < 0){
+            start = end;
+            end = this.start.getName();
+        }
+        road.setAttribute("end", end);
+        road.setAttribute("start", start);
         return road;
     }
 
@@ -57,16 +71,16 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparabl
         return end.getLocation();
     }
 
-    public void setLine(double x1, double y1, double x2, double y2) {
-
-    }
-
     public Rectangle2D getBounds2D() {
         return new Rectangle2D.Double(start.getX(), start.getY(),abs(end.getX() - start.getX()),abs(end.getY()- start.getY()));
     }
 
     public double length() {
         return this.end.getLocation().distance(this.start.getLocation());
+    }
+
+    public int hashCode() {
+        return start.hashCode() + end.hashCode();
     }
 
     public boolean equals(Object obj) {
@@ -79,13 +93,5 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D, Comparabl
                 ||
                 ( other.getEnd().equals(this.getStart()) && other.getStart().equals(this.getEnd()) )
         );
-    }
-
-    public int compareTo(Object o) {
-        Road r = (Road)o;
-        int res = this.start.getName().compareTo(r.start.getName());
-        if (res == 0)
-            res = this.end.getName().compareTo(r.end.getName());
-        return -1*res;
     }
 }

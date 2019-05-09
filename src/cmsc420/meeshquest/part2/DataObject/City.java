@@ -43,7 +43,7 @@ public class City extends Point2D.Float implements Xmlable, Geometry2D {
         String[] values =
                 {getName(), Integer.toString((int)getX()), Integer.toString((int)getY()), Integer.toString(getRadius()), getColor()};
         Document builder = getBuilder();
-        Element city = builder.createElement("city");
+        Element city = (isolated) ? builder.createElement("isolatedCity") : builder.createElement("city");
         for (int i = 0; i < names.length; i++) {
             city.setAttribute(names[i], values[i]);
         }
@@ -51,7 +51,7 @@ public class City extends Point2D.Float implements Xmlable, Geometry2D {
     }
 
     public int hashCode() {
-        return 31 * (1 + name.hashCode());
+        return name.hashCode() + color.hashCode();
     }
 
     public boolean equals(Object obj) {

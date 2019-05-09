@@ -26,6 +26,7 @@ public enum Fault {
     nameNotInDictionary,
     noCitiesExistInRange,
     noCitiesToList,
+    commandError,
     undefined,
     fatal
 

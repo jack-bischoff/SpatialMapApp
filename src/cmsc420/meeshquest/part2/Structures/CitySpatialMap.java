@@ -1,5 +1,7 @@
 package cmsc420.meeshquest.part2.Structures;
 
+import cmsc420.meeshquest.part2.Comparators.CityDescendingOrder;
+import cmsc420.meeshquest.part2.Comparators.RoadDescendingOrder;
 import cmsc420.meeshquest.part2.DataObject.City;
 import cmsc420.meeshquest.part2.DataObject.Response;
 import cmsc420.meeshquest.part2.DataObject.Road;
@@ -77,14 +79,14 @@ public class CitySpatialMap {
         return new Response(spatialMap.toXml());
     }
 
-
-    public Response nearestCity (Point2D.Float nearestTo) {
+    public Response nearestCity (int x, int y) {
         if (spatialMap.isEmpty())
             return new Response(true, Fault.cityNotFound);
 
-        City c = spatialMap.nearestCity(nearestTo);
+        Point2D.Float fromPoint = new Point2D.Float(x, y);
+        City c = spatialMap.nearestCity(fromPoint);
         if (c == null)
-            return new Response(true, Fault.undefined);
+            return new Response(true, Fault.cityNotFound);
 
         return new Response(c);
     }
@@ -93,12 +95,7 @@ public class CitySpatialMap {
         List<City> citiesInRange = spatialMap.rangeCities(new Point2D.Float(x, y), radius);
         if (citiesInRange.isEmpty())
             return  new Response(true, Fault.noCitiesExistInRange);
-        citiesInRange.sort(new Comparator<City>() {
-            //reverse ordering
-            public int compare(City o1, City o2) {
-                return -1 * (o1.getName().compareTo(o2.getName()));
-            }
-        });
+        citiesInRange.sort(new CityDescendingOrder());
         return new Response(citiesInRange);
     }
 
@@ -106,10 +103,42 @@ public class CitySpatialMap {
         List<Road> roadsInRange = spatialMap.rangeRoads(new Point2D.Float(x, y), radius);
         if (roadsInRange.isEmpty())
             return new Response(true, Fault.noRoadsExistInRange);
-        roadsInRange.sort(new Comparator<Road>() {
-            public int compare(Road o1, Road o2) { return o1.compareTo(o2); }
-        });
+        roadsInRange.sort(new RoadDescendingOrder());
         return new Response(roadsInRange);
     }
 
+    public Response nearestRoad(int x, int y) {
+        Point2D.Float point = new Point2D.Float(x, y);
+        if (spatialMap.isEmpty())
+            return new Response(true, Fault.roadNotFound);
+
+        Road result = spatialMap.nearestRoad(point);
+        if (result == null)
+            return new Response(true, Fault.roadNotFound);
+        return new Response(result);
+    }
+
+    public Response nearestIsolatedCity(int x, int y) {
+        Point2D.Float point = new Point2D.Float(x, y);
+        if (spatialMap.isEmpty())
+            return new Response(true, Fault.cityNotFound);
+        City result = spatialMap.nearestIsolatedCity(point);
+        if (result == null)
+            return new Response(true, Fault.cityNotFound);
+        return new Response(result);
+    }
+
+    public Response nearestCityToRoad(City start, City end) {
+        Road road = new Road(start, end);
+        if (!graph.hasEdge(road))
+            return new Response(true, Fault.roadIsNotMapped);
+        City result = spatialMap.nearestCityToRoad(road);
+        if (result == null)
+            return new Response(true, Fault.noOtherCitiesMapped);
+        return new Response(result);
+    }
+
+    public Response shortestPath(City start, City end) {
+        throw new NotImplementedException();
+    }
 }

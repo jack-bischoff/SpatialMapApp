@@ -20,7 +20,7 @@ public class MeeshQuest {
     	Document results = null;
     	CommandMiddleware mw;
         try {
-//            Document doc = XmlUtility.validateNoNamespace(new File("./xmltests/part2.public.nearestCity.input.xml"));
+//            Document doc = XmlUtility.validateNoNamespace(new File("./xmltests/part2.public.range.input.xml"));
         	Document doc = XmlUtility.validateNoNamespace(System.in);
             results = XmlBuilder.getBuilder();
         	Element Root = results.createElement("results");
@@ -90,8 +90,24 @@ public class MeeshQuest {
                             params = new Parameters(attrs, new String[]{"x", "y"});
                             Output = mw.nearestCity(params);
                             break;
+                        case "nearestIsolatedCity":
+                            params = new Parameters(attrs, new String[]{"x", "y"});
+                            Output = mw.nearestIsolatedCity(params);
+                            break;
+                        case "nearestRoad":
+                            params = new Parameters(attrs, new String[]{"x", "y"});
+                            Output = mw.nearestRoad(params);
+                            break;
+                        case "nearestCityToRoad":
+                            params = new Parameters(attrs, new String[]{"start", "end"});
+                            Output = mw.nearestCityToRoad(params);
+                            break;
+                        case "shortestPath":
+                            params = new Parameters(attrs, new String[]{"start", "end", "saveMap", "saveHTML"});
+                            Output = mw.shortestPath(params);
+                            break;
                         default:
-                            Output = new Result(results.createElement("undefinedError"));
+                            Output = new Result(results.createElement(Fault.commandError.toString()));
 
                     }
 

@@ -4,6 +4,7 @@ import cmsc420.meeshquest.part2.Structures.CityDictionary;
 
 import cmsc420.meeshquest.part2.Structures.CitySpatialMap;
 import org.w3c.dom.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.util.List;
 
 //CommandMiddleware translate parsed xml into java-tized data and handles the plumbing between the I/O and internal data structures.
-//TODO: Extend Response object to handle output, naming...
-//TODO: Consider refactoring params into Parameter Object with paramsOrdering field.
 public class CommandMiddleware {
     private CityDictionary cityDictionary;
     private CitySpatialMap spatialMap;
@@ -107,25 +106,27 @@ public class CommandMiddleware {
     }
 
     Result unmapCity(Parameters params) {
-        String name = params.get("name");
-
-        City city = cityDictionary.get(name);
-        if (city == null)
-            return new Failure(Fault.nameNotInDictionary);
-
-        Response res = spatialMap.unmapCity(city);
-        if (res.error)
-            return new Failure(res.payload);
-
-        return new Success();
+        throw new NotImplementedException();
+//        String name = params.get("name");
+//
+//        City city = cityDictionary.get(name);
+//        if (city == null)
+//            return new Failure(Fault.nameNotInDictionary);
+//
+//        Response res = spatialMap.unmapCity(city);
+//        if (res.error)
+//            return new Failure(res.payload);
+//
+//        return new Success();
     }
 
     Result mapRoad(Parameters params) {
         City start = cityDictionary.get(params.get("start")), end = cityDictionary.get(params.get("end"));
         if (start == null) return new Failure(Fault.startPointDoesNotExist);
         if (end == null) return new Failure(Fault.endPointDoesNotExist);
-        if (start.isIsolated() || end.isIsolated()) return new Failure(Fault.startOrEndIsIsolated);
         if (start.equals(end)) return new Failure(Fault.startEqualsEnd);
+        if (start.isIsolated() || end.isIsolated()) return new Failure(Fault.startOrEndIsIsolated);
+
 
         Response res = spatialMap.mapRoad(new Road(start, end));
         if (res.error)
@@ -153,15 +154,14 @@ public class CommandMiddleware {
     }
 
     Result nearestCity(Parameters params) {
-       Point2D.Float point = new Point2D.Float(
-                       Integer.parseInt(params.get("x")),
-                       Integer.parseInt(params.get("y"))
-       );
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("y"));
 
-        Response res = spatialMap.nearestCity(point);
+        Response res = spatialMap.nearestCity(x, y);
         if (res.error)
             return new Failure(res.payload);
-        return new Success(((City)res.payload).toXml());
+
+        return new Success((City)res.payload);
     }
 
     Result rangeCities(Parameters params) throws IOException {
@@ -194,5 +194,48 @@ public class CommandMiddleware {
             return new Failure(res.payload);
 
         return new Success(listBuilder((List<Xmlable>)res.payload, "roadList"));
+    }
+
+    Result nearestRoad(Parameters params) {
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("x"));
+
+        Response res = spatialMap.nearestRoad(x, y);
+        if (res.error)
+            return new Failure(res.payload);
+        return new Success((Road)res.payload);
+    }
+
+    Result nearestIsolatedCity(Parameters params) {
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("y"));
+
+        Response res = spatialMap.nearestIsolatedCity(x, y);
+        if (res.error)
+            return new Failure(res.payload);
+
+        return new Success((City)res.payload);
+    }
+
+    Result nearestCityToRoad(Parameters params) {
+        City start = cityDictionary.get(params.get("start"));
+        City end = cityDictionary.get(params.get("end"));
+
+        Response res = spatialMap.nearestCityToRoad(start, end);
+        if (res.error)
+            return new Failure(res.payload);
+
+        return new Success((City)res.payload);
+    }
+
+    Result shortestPath(Parameters params) {
+        City start = cityDictionary.get(params.get("start"));
+        City end = cityDictionary.get(params.get("end"));
+
+        Response res = spatialMap.shortestPath(start, end);
+        if (res.error)
+            return new Failure(res.payload);
+
+        return new Success((Xmlable)res.payload);
     }
 }
