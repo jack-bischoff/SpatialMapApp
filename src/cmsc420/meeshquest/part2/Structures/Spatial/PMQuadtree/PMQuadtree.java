@@ -9,6 +9,7 @@ import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Element;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.sound.sampled.Line;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -33,8 +34,8 @@ public abstract class PMQuadtree implements Xmlable {
         Node unmap(Geometry2D g) { throw new NotImplementedException(); }
         abstract boolean contains(Geometry2D g);
         abstract Element toXml();
-        abstract double distanceCity(Point2D to);
-        abstract double distanceRoad(Point2D to);
+        abstract double distanceFromPointToCity(Point2D to);
+        abstract double minDistanceFromPointToRoad(Point2D point);
     }
 
     class White extends Node {
@@ -50,10 +51,10 @@ public abstract class PMQuadtree implements Xmlable {
             return getBuilder().createElement("white");
         }
 
-        double distanceCity(Point2D to) {
+        double distanceFromPointToCity(Point2D to) {
             return Double.MAX_VALUE;
         }
-        double distanceRoad(Point2D to) { return Double.MAX_VALUE; }
+        double minDistanceFromPointToRoad(Point2D to) { return Double.MAX_VALUE; }
 
     }
 
@@ -107,8 +108,12 @@ public abstract class PMQuadtree implements Xmlable {
             return gray;
         }
 
-        double distanceCity(Point2D to) { return to.distance(area.getCenterX(), area.getCenterY()); }
-        double distanceRoad(Point2D to) { return to.distance(area.getCenterX(), area.getCenterY());}
+        double distanceFromPointToCity(Point2D point) {
+            return distanceFromPointToRectangle(point, area);
+        }
+        double minDistanceFromPointToRoad(Point2D point) {
+           return distanceFromPointToRectangle(point, area);
+        }
     }
 
     class Black extends Node {
@@ -150,22 +155,23 @@ public abstract class PMQuadtree implements Xmlable {
 
             Element black = getBuilder().createElement("black");
             black.setAttribute("cardinality", Integer.toString(cardinality));
-            if (city != null) black.appendChild(city.toXml());
+            if (city != null)
+                black.appendChild(city.toXml( (city.isIsolated()) ? "isolatedCity" : "city" ));
 
             Road[] descending = roads.toArray(new Road[0]);
             Arrays.sort(descending, new RoadDescendingOrder());
             for (Road r : descending)
-                black.appendChild(r.toXmlReverse());
+                black.appendChild(r.toXml());
 
             return black;
         }
 
-        double distanceCity(Point2D to) {
+        double distanceFromPointToCity(Point2D to) {
             if (city != null) return city.getLocation().distance(to);
             return Integer.MAX_VALUE;
         }
 
-        double distanceRoad(Point2D to) {
+        double minDistanceFromPointToRoad(Point2D to) {
             if (!roads.isEmpty())
                 return minRoad(to).ptSegDist(to);
             return Double.MAX_VALUE;
@@ -179,6 +185,10 @@ public abstract class PMQuadtree implements Xmlable {
                 if (dist < minDist) {
                     minDist = dist;
                     min = road;
+                } else if (dist == minDist) {
+                    if (new RoadDescendingOrder().compare(road, min) < 0) {
+                        min = road;
+                    }
                 }
             }
             return min;
@@ -188,15 +198,15 @@ public abstract class PMQuadtree implements Xmlable {
 
     public PMQuadtree(int width, int height) {
         map = new Rectangle(0, 0, width, height);
-        root = new White();
+        root = White;
     }
 
     public boolean inRange(Point2D point) {
-        return map.contains(point);
+        return intersects(point, map);
     }
 
     public boolean inRange(Line2D line) {
-        return map.contains(line.getP1()) && map.contains(line.getP2());
+        return intersects(line.getP1(), map) && intersects(line.getP2(), map);
     }
 
     public int size() {
@@ -241,7 +251,7 @@ public abstract class PMQuadtree implements Xmlable {
 
     //Most likely will be iterative solutions
     public List<City> rangeCities(Point2D.Float center, int radius) {
-        LinkedList<City> inRange = new LinkedList<>();
+        LinkedList<City> citiesInRange = new LinkedList<>();
         Circle2D.Double searchCircle = new Circle2D.Double(center.getX(), center.getY(), radius);
         LinkedList<Node> Queue = new LinkedList<>();
         Queue.add(root);
@@ -253,15 +263,15 @@ public abstract class PMQuadtree implements Xmlable {
                     Queue.addAll( Arrays.asList(gray.children));
             } else if (current instanceof Black) {
                 Black black = (Black)current;
-                if (black.city != null && !inRange.contains(black.city) && intersects(black.city.getLocation(), searchCircle))
-                    inRange.add(black.city);
+                if (black.city != null && !citiesInRange.contains(black.city) && intersects(black.city.getLocation(), searchCircle))
+                    citiesInRange.add(black.city);
             }
         }
-        return inRange;
+        return citiesInRange;
     }
 
     public List<Road> rangeRoads(Point2D.Float center, int radius) {
-        LinkedList<Road> inRange = new LinkedList<>();
+        LinkedList<Road> roadsInRange = new LinkedList<>();
         Circle2D.Double searchCircle = new Circle2D.Double(center.getX(), center.getY(), radius);
         LinkedList<Node> Queue = new LinkedList<>();
 
@@ -275,38 +285,47 @@ public abstract class PMQuadtree implements Xmlable {
             } else if (current instanceof Black) {
                 Black black = (Black)current;
                 for (Road r : black.roads) {
-                    if (!inRange.contains(r) && circleIntersect(searchCircle, r))
-                        inRange.add(r);
+                    if (!roadsInRange.contains(r) && circleIntersect(searchCircle, r))
+                        roadsInRange.add(r);
                 }
             }
         }
-        return inRange;
+        return roadsInRange;
     }
 
-    public City nearestCity(Point2D center, boolean isolated) {
+    public City nearestCity(Point2D center, nearestValidator V) {
         PriorityQueue<Node> minHeap = new PriorityQueue<>(new PointDistanceComparator(center));
 
         minHeap.add(root);
         while (!minHeap.isEmpty()) {
             Node current = minHeap.poll();
-            if (current instanceof Black && ((Black) current).city != null)
+            if (current instanceof Black && V.validate((Black)current))
                 return ((Black) current).city;
             else if (current instanceof Gray)
                 for (Node child : ((Gray) current).children) {
                     if (child instanceof Gray) minHeap.add(child);
-                    if (child instanceof Black && ((Black) child).city != null && ((Black) child).city.isIsolated() == isolated)
-                        minHeap.add(child);
+                    else if (child instanceof Black && V.validate((Black)child)) minHeap.add(child);
                 }
         }
         return null;
     }
 
     public City nearestCity(Point2D center) {
-        return nearestCity(center, false);
+        nearestValidator V = new nearestValidator() {
+            boolean validate(Black b) {
+                return b.city != null && !b.city.isIsolated();
+            }
+        };
+        return nearestCity(center, V);
     }
 
     public City nearestIsolatedCity(Point2D center) {
-        return nearestCity(center, true);
+        nearestValidator V = new nearestValidator() {
+            boolean validate(Black b) {
+                return b.city != null && b.city.isIsolated();
+            }
+        };
+        return nearestCity(center, V);
     }
 
     public Road nearestRoad(Point2D center) {
@@ -339,12 +358,41 @@ public abstract class PMQuadtree implements Xmlable {
     //Helper methods and Comparators
     private boolean circleIntersect(Circle2D c, Line2D l) {
         Point2D start = l.getP1(), end = l.getP2(), center = c.getCenter();
-        Double radius = c.getRadius(), cX = center.getX(), cY = center.getY(),
-                x1 = start.getX(), x2 = end.getX(), y1 = start.getY(), y2 = end.getY();
+        if (intersects(start, c) || intersects(end, c)) return true;
+        else {
+            double  radius = c.getRadius(),
+                    cX = center.getX(), cY = center.getY(),
+                    x1 = start.getX(), x2 = end.getX(), y1 = start.getY(), y2 = end.getY();
+            double  dx = x2 - x1,
+                    dy = y2 - y1,
+                    dr2 = pow(dx, 2) + pow(dy, 2),
+                    D = x1 * y2 - x2 * y1;
 
-        Double distance =
-                ( abs((y2 - y1)*cX - (x2 - x1)*cY + x2*y1 - y2*x1) ) / sqrt( pow((y2-y1), 2) + pow((x2 - x1), 2) );
-        return distance <= radius;
+            double discriminant = pow(radius, 2) * dr2 - pow(D, 2);
+            Line2D.Double cHorz = new Line2D.Double(c.getMinX(), cY, c.getMaxX(), cY);
+            Line2D.Double cVert = new Line2D.Double(cX, c.getMinY(), cX , c.getMaxY());
+            if (discriminant >= 0 && ( cHorz.intersectsLine(l) || cVert.intersectsLine(l))) return true;
+            else return false;
+        }
+
+//        double top = abs( (y2 - y1)*cX - (x2 - x1)*cY + x2*y1 - y2*x1 );
+//        double bottom =  sqrt( pow((y2-y1), 2) + pow((x2 - x1), 2) );
+//        double distance = top / bottom;
+//        return distance <= radius;
+
+
+    }
+
+    private double distanceFromPointToRectangle(Point2D point, Rectangle2D rect) {
+        if (intersects(point, rect)) return 0;
+
+        Line2D.Double top, bottom, left, right;
+        double x = rect.getX(), y = rect.getY(), height = rect.getHeight(), width = rect.getWidth();
+        top = new Line2D.Double(x, y + height, x + width, y + height);
+        bottom = new Line2D.Double(x, y, x + width, y);
+        left = new Line2D.Double(x, y, x, y + height);
+        right = new Line2D.Double(x + width, y, x + width, y + height);
+        return min( min(top.ptSegDist(point), bottom.ptSegDist(point)), min(left.ptSegDist(point), right.ptSegDist(point)) );
 
     }
 
@@ -354,8 +402,8 @@ public abstract class PMQuadtree implements Xmlable {
             this.center = center;
         }
         public int compare(Node o1, Node o2) {
-            double dist1 = o1.distanceCity(center);
-            double dist2 = o2.distanceCity(center);
+            double dist1 = o1.distanceFromPointToCity(center);
+            double dist2 = o2.distanceFromPointToCity(center);
             if (dist1 < dist2) return -1;
             else if (dist1 > dist2) return 1;
             else if (dist1 == dist2 && o1 instanceof Black && o2 instanceof Black)
@@ -365,6 +413,10 @@ public abstract class PMQuadtree implements Xmlable {
         }
     }
 
+    private abstract class nearestValidator {
+        abstract boolean validate(Black b);
+    }
+
     private class RoadDistanceComparator implements Comparator<Node> {
         private Point2D center;
         RoadDistanceComparator(Point2D center) {
@@ -372,12 +424,18 @@ public abstract class PMQuadtree implements Xmlable {
         }
 
         public int compare(Node o1, Node o2) {
-            double dist1 = o1.distanceRoad(center);
-            double dist2 = o2.distanceRoad(center);
+            double dist1 = o1.minDistanceFromPointToRoad(center);
+            double dist2 = o2.minDistanceFromPointToRoad(center);
             if (dist1 < dist2) return -1;
             else if (dist1 > dist2) return 1;
-            else if (o1 instanceof Black && o2 instanceof Black)
-                return new RoadDescendingOrder().compare( ((Black) o1).minRoad(center), ((Black) o2).minRoad(center));
+            else {
+                if (o1 instanceof Black && o2 instanceof Black)
+                    return new RoadDescendingOrder().compare( ((Black) o1).minRoad(center), ((Black) o2).minRoad(center));
+                else if ( o1 instanceof Gray && !(o2 instanceof Gray))
+                    return -1;
+                else if (o2 instanceof  Gray && !(o1 instanceof Gray))
+                    return 1;
+            }
             return 0;
         }
     }

@@ -139,6 +139,10 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
         return value;
     }
 
+    public V get(Object key) {
+        if (key == null) throw new NullPointerException();
+        return root.get((K)key);
+    }
     public int getModCount() {
         return this.modCount;
     }
@@ -286,8 +290,9 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                 return Treap.this.comparator();
             }
 
-            @Override
             public V put(K key, V value) {
+                if (key == null) throw new NullPointerException();
+                if (!inRange(key)) throw new IllegalArgumentException();
                 return Treap.this.put(key, value);
             }
 

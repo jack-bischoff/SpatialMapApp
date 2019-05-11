@@ -1,7 +1,6 @@
 package cmsc420.meeshquest.part2.DataObject;
 
 import cmsc420.geom.Geometry2D;
-import cmsc420.meeshquest.part2.Comparators.CityDescendingOrder;
 import cmsc420.meeshquest.part2.Xmlable;
 import org.w3c.dom.Element;
 
@@ -15,8 +14,8 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D {
     private City start, end;
 
     public Road(City start, City end) {
-        this.end = end;
         this.start = start;
+        this.end = end;
     }
 
     public Element toXml() {
@@ -27,16 +26,11 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D {
         return road;
     }
 
-    public Element toXmlReverse() {
-        Element road = getBuilder().createElement("road");
-        String end = this.end.getName(), start = this.start.getName();
-        if (end.compareTo(start) < 0){
-            start = end;
-            end = this.start.getName();
+    public Road sanitizeDirection() {
+        if (this.end.getName().compareTo(this.start.getName()) < 0) {
+            return new Road(this.end, this.start);
         }
-        road.setAttribute("end", end);
-        road.setAttribute("start", start);
-        return road;
+        return this;
     }
 
     public City getStart() { return  start; }

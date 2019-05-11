@@ -98,10 +98,10 @@ public class CommandMiddleware {
         if (!cityDictionary.contains(name))
             return new Failure(Fault.nameNotInDictionary);
         City c = cityDictionary.get(name);
-        c.setIsolated(true);
         Response res = spatialMap.mapCity(c);
         if (res.error)
             return new Failure(res.payload);
+
         return new Success();
     }
 
@@ -203,7 +203,7 @@ public class CommandMiddleware {
         Response res = spatialMap.nearestRoad(x, y);
         if (res.error)
             return new Failure(res.payload);
-        return new Success((Road)res.payload);
+        return new Success(((Road)res.payload));
     }
 
     Result nearestIsolatedCity(Parameters params) {

@@ -67,7 +67,7 @@ public class CitySpatialMap {
             spatialMap.mapCity(road.getEnd());
 
         graph.addEdge(road);
-        spatialMap.mapRoad(road);
+        spatialMap.mapRoad(road.sanitizeDirection());
 
         return new Response(road);
     }
