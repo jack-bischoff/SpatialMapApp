@@ -221,6 +221,7 @@ public class CommandMiddleware {
         City start = cityDictionary.get(params.get("start"));
         City end = cityDictionary.get(params.get("end"));
 
+
         Response res = spatialMap.nearestCityToRoad(start, end);
         if (res.error)
             return new Failure(res.payload);

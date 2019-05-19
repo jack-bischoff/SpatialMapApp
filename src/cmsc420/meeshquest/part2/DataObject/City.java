@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.awt.geom.Point2D;
 
-public class City extends Point2D.Float implements Xmlable, Geometry2D {
+public class City extends Point2D.Float implements Xmlable, Geometry2D, Comparable<City> {
     private int radius;
     private String color, name;
     private boolean isolated = false;
@@ -68,5 +68,9 @@ public class City extends Point2D.Float implements Xmlable, Geometry2D {
 
     public String toString() {
         return toXml().toString();
+    }
+
+    public int compareTo(City o) {
+        return name.compareTo(o.getName());
     }
 }

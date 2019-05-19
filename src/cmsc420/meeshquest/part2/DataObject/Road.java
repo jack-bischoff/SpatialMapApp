@@ -26,6 +26,14 @@ public class Road extends Line2D.Float implements Xmlable, Geometry2D {
         return road;
     }
 
+    public Element toReverseXml() {
+        Element road = getBuilder().createElement("road");
+        String end = this.end.getName(), start = this.start.getName();
+        road.setAttribute("start", start);
+        road.setAttribute("end", end);
+        return road;
+    }
+
     public Road sanitizeDirection() {
         if (this.end.getName().compareTo(this.start.getName()) < 0) {
             return new Road(this.end, this.start);
