@@ -1,4 +1,4 @@
-package cmsc420.meeshquest.part2.DataObject;
+package cmsc420.meeshquest.part3.DataObject;
 
 public class Response {
     public Object payload;

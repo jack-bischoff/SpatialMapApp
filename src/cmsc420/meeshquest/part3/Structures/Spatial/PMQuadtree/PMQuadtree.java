@@ -1,12 +1,12 @@
-package cmsc420.meeshquest.part2.Structures.Spatial.PMQuadtree;
+package cmsc420.meeshquest.part3.Structures.Spatial.PMQuadtree;
 
 import cmsc420.geom.Circle2D;
 import cmsc420.geom.Geometry2D;
-import cmsc420.meeshquest.part2.Comparators.CityDescendingOrder;
-import cmsc420.meeshquest.part2.Comparators.RoadDescendingOrder;
-import cmsc420.meeshquest.part2.DataObject.City;
-import cmsc420.meeshquest.part2.DataObject.Road;
-import cmsc420.meeshquest.part2.Xmlable;
+import cmsc420.meeshquest.part3.Comparators.CityDescendingOrder;
+import cmsc420.meeshquest.part3.Comparators.RoadDescendingOrder;
+import cmsc420.meeshquest.part3.DataObject.City;
+import cmsc420.meeshquest.part3.DataObject.Road;
+import cmsc420.meeshquest.part3.Xmlable;
 import org.w3c.dom.Element;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

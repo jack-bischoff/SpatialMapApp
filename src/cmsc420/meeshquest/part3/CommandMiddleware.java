@@ -1,13 +1,12 @@
-package cmsc420.meeshquest.part2;
-import cmsc420.meeshquest.part2.DataObject.*;
-import cmsc420.meeshquest.part2.Structures.CityDictionary;
+package cmsc420.meeshquest.part3;
+import cmsc420.meeshquest.part3.DataObject.*;
+import cmsc420.meeshquest.part3.Structures.CityDictionary;
 
-import cmsc420.meeshquest.part2.Structures.CitySpatialMap;
+import cmsc420.meeshquest.part3.Structures.CitySpatialMap;
 import org.w3c.dom.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
 

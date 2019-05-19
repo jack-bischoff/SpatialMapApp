@@ -1,6 +1,6 @@
-package cmsc420.meeshquest.part2.Comparators;
+package cmsc420.meeshquest.part3.Comparators;
 
-import cmsc420.meeshquest.part2.DataObject.City;
+import cmsc420.meeshquest.part3.DataObject.City;
 
 import java.util.Comparator;
 

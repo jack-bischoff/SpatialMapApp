@@ -1,7 +1,7 @@
-package cmsc420.meeshquest.part2.DataObject;
+package cmsc420.meeshquest.part3.DataObject;
 
 import cmsc420.geom.Geometry2D;
-import cmsc420.meeshquest.part2.Xmlable;
+import cmsc420.meeshquest.part3.Xmlable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.awt.geom.Point2D;

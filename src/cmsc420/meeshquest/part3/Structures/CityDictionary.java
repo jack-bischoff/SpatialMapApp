@@ -1,9 +1,9 @@
-package cmsc420.meeshquest.part2.Structures;
+package cmsc420.meeshquest.part3.Structures;
 
-import cmsc420.meeshquest.part2.DataObject.City;
-import cmsc420.meeshquest.part2.Comparators.CoordinateComparator;
-import cmsc420.meeshquest.part2.DataObject.Response;
-import cmsc420.meeshquest.part2.Fault;
+import cmsc420.meeshquest.part3.DataObject.City;
+import cmsc420.meeshquest.part3.Comparators.CoordinateComparator;
+import cmsc420.meeshquest.part3.DataObject.Response;
+import cmsc420.meeshquest.part3.Fault;
 import cmsc420.sortedmap.Treap;
 import org.w3c.dom.Element;
 

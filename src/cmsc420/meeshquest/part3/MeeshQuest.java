@@ -1,14 +1,13 @@
-package cmsc420.meeshquest.part2;
+package cmsc420.meeshquest.part3;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import cmsc420.meeshquest.part2.DataObject.Command;
-import cmsc420.meeshquest.part2.DataObject.Parameters;
-import cmsc420.meeshquest.part2.DataObject.Result;
+import cmsc420.meeshquest.part3.DataObject.Command;
+import cmsc420.meeshquest.part3.DataObject.Parameters;
+import cmsc420.meeshquest.part3.DataObject.Result;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -20,7 +19,7 @@ public class MeeshQuest {
     	Document results = null;
     	CommandMiddleware mw;
         try {
-//            Document doc = XmlUtility.validateNoNamespace(new File("./xmltests/part2.public.nearestCity.input.xml"));
+//            Document doc = XmlUtility.validateNoNamespace(new File("./xmltests/part3.public.nearestCity.input.xml"));
         	Document doc = XmlUtility.validateNoNamespace(System.in);
             results = XmlBuilder.getBuilder();
         	Element Root = results.createElement("results");

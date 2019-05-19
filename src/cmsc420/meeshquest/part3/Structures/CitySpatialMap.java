@@ -1,14 +1,14 @@
-package cmsc420.meeshquest.part2.Structures;
+package cmsc420.meeshquest.part3.Structures;
 
-import cmsc420.meeshquest.part2.Comparators.CityDescendingOrder;
-import cmsc420.meeshquest.part2.Comparators.RoadDescendingOrder;
-import cmsc420.meeshquest.part2.DataObject.City;
-import cmsc420.meeshquest.part2.DataObject.Response;
-import cmsc420.meeshquest.part2.DataObject.Road;
-import cmsc420.meeshquest.part2.Fault;
-import cmsc420.meeshquest.part2.Structures.AdjacencyList.AdjacencyList;
-import cmsc420.meeshquest.part2.Structures.Spatial.PMQuadtree.PM3Quad;
-import cmsc420.meeshquest.part2.VisualMap;
+import cmsc420.meeshquest.part3.Comparators.CityDescendingOrder;
+import cmsc420.meeshquest.part3.Comparators.RoadDescendingOrder;
+import cmsc420.meeshquest.part3.DataObject.City;
+import cmsc420.meeshquest.part3.DataObject.Response;
+import cmsc420.meeshquest.part3.DataObject.Road;
+import cmsc420.meeshquest.part3.Fault;
+import cmsc420.meeshquest.part3.Structures.AdjacencyList.AdjacencyList;
+import cmsc420.meeshquest.part3.Structures.Spatial.PMQuadtree.PM3Quad;
+import cmsc420.meeshquest.part3.VisualMap;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.geom.Point2D;

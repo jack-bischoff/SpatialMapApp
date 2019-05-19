@@ -1,6 +1,6 @@
 package cmsc420.sortedmap;
 
-import cmsc420.meeshquest.part2.Xmlable;
+import cmsc420.meeshquest.part3.Xmlable;
 import org.w3c.dom.Element;
 
 import java.util.*;
