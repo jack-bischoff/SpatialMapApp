@@ -19,7 +19,7 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
     };
     private static Random random = new Random();
 
-    private class Empty extends Node implements Xmlable {
+    class Empty extends Node implements Xmlable {
         private Empty() {
             super();
         }
@@ -39,7 +39,7 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
             return getBuilder().createElement("emptyChild");
         }
     }
-    private class Node extends AbstractMap.SimpleEntry<K,V> implements SortedMap.Entry<K,V>, Xmlable {
+    public class Node extends AbstractMap.SimpleEntry<K,V> implements SortedMap.Entry<K,V>, Xmlable {
         private Node left, right;
         private int priority;
 
@@ -55,20 +55,24 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
 
         Node put(K keyToAdd, V valueToAdd) {
             Node result = this;
-            if (comparator.compare(this.getKey(), keyToAdd) > 0) {
+            int res = comparator.compare(this.getKey(), keyToAdd);
+
+            if (res > 0) {
                 left = left.put(keyToAdd, valueToAdd);
                 if (left.priority > this.priority) {
                     result = left;
                     this.left = result.right;
                     result.right = this;
                 }
-            } else {
+            } else if (res < 0){
                 right = right.put(keyToAdd, valueToAdd);
                 if (right.priority > this.priority) {
                     result = right;
                     this.right = result.left;
                     result.left = this;
                 }
+            } else {
+                this.setValue(valueToAdd);
             }
             return result;
         }
@@ -106,18 +110,6 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
             return node;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry<K, V> me = (Map.Entry<K,V>)o;
-            return this.getKey().equals(me.getKey()) && this.getValue().equals(me.getValue());
-        }
-
-        @Override
-        public int hashCode() {
-            return getKey().hashCode() ^ getValue().hashCode();
-        }
     }
 
     public Treap() {
@@ -131,11 +123,10 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
 
     public V put(K key, V value) {
         if (key == null) throw new NullPointerException();
-        if (!containsKey(key)) {
-            root = root.put(key, value);
-            size++;
-            modCount++;
-        }
+        if (!root.containsKey(key)) size++;
+        root = root.put(key, value);
+        modCount++;
+
         return value;
     }
 
@@ -195,8 +186,20 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
             }
 
             public boolean contains(Object o) {
-                Map.Entry<K, V> me = (Map.Entry<K, V>) o;
-                return Treap.this.containsKey(me);
+                if (!(o instanceof Entry)) return false;
+                Entry e = (Entry)o;
+                V val = Treap.this.get(e.getKey());
+                return e.getValue().equals(val);
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                Set<Entry<K,V>> s = (Set<Entry<K,V>>)c;
+                for (Entry<K,V> ele : s) {
+                    if (ele == null) throw new NullPointerException();
+                    if (!this.contains(ele)) return false;
+                }
+                return true;
             }
 
             public Iterator<Entry<K, V>> iterator() {
@@ -221,12 +224,22 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                 Treap.this.clear();
             }
 
-            public boolean containsAll(Collection<?> c) {
-                Collection<Map.Entry<K, V>> meC = (Collection<Map.Entry<K, V>>) c;
-                for (Map.Entry<K, V> ele : meC) if (!contains(ele)) return false;
-                return true;
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (!(o instanceof Set)) return false;
+                Set s = (Set)o;
+                if (s.size() != size()) return false;
+                return this.containsAll(s);
             }
 
+            public int hashCode() {
+                int sum = 0;
+                for (Map.Entry<K,V> me : this) {
+                    sum += me.hashCode();
+                }
+
+                return sum;
+            }
         };
     }
     public SortedMap<K, V> subMap(K fromKey, K toKey) {
@@ -244,6 +257,18 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                 return (comp.compare(from, key) <= 0 && comp.compare(to, key) > 0);
             }
 
+            private Entry<K,V>[] circumscribe(K fromKey, K toKey) {
+                Map.Entry<K,V>[] arr = Treap.this.toArray();
+                int i = 0, start = 0;
+                while (i < arr.length && comp.compare(arr[i].getKey(), toKey) < 0) {
+                    if (comp.compare(arr[i].getKey(), fromKey) < 0) start++;
+                    i++;
+                }
+
+                return Arrays.copyOfRange(arr,start, i);
+                //at this point start corresponds to the closest key to fromKey and i is closest key to toKey;\
+            }
+
             public Set<Entry<K, V>> entrySet() {
                 return new AbstractSet<Entry<K, V>>() {
                     private K fromKey = from, toKey = to;
@@ -251,19 +276,11 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                     public Iterator<Entry<K, V>> iterator() {
                         return new Iterator<Entry<K, V>>() {
                             private int modCount = Treap.this.getModCount();
-                            private Map.Entry<K,V>[] array = Treap.this.toArray();
-                            private int index = getStartIndex();
+                            private Map.Entry<K,V>[] array = circumscribe(fromKey, toKey);
+                            private int index = 0;
 
-                            private int getStartIndex() {
-                                for (int i = 0; i < array.length; i++) {
-                                    K current = array[i].getKey();
-                                    int c = comp.compare(current, from);
-                                    if (c >= 0) return i;
-                                }
-                                return array.length;
-                            }
                             public boolean hasNext() {
-                                return array.length > index && inRange(array[index].getKey());
+                                return array.length > index;
                             }
 
                             public Entry<K, V> next() {
@@ -272,6 +289,41 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                                 throw new NoSuchElementException();
                             }
                         };
+                    }
+
+                    @Override
+                    public boolean contains(Object o) {
+                        Entry<K,V> e = (Entry<K,V>)o;
+                        if (!inRange(e.getKey())) return false;
+                        V val = Treap.this.get(e.getKey());
+                        return val.equals(e.getValue());
+                    }
+
+                    @Override
+                    public boolean containsAll(Collection<?> c) {
+                        Set<Entry<K,V>> s = (Set<Entry<K,V>>)c;
+                        for (Entry<K,V> ele : s) {
+                            if (ele == null) throw new NullPointerException();
+                            if (!this.contains(ele)) return false;
+                        }
+
+                        return true;
+                    }
+
+                    @Override
+                    public int hashCode() {
+                        int sum = 0;
+                        for (Entry<K,V> ele : this) sum += ele.hashCode();
+                        return sum;
+                    }
+
+                    @Override
+                    public boolean equals(Object o) {
+                        if (o == this) return true;
+                        if (!(o instanceof Set)) return false;
+                        Set s = (Set)o;
+                        if (s.size() != size()) return false;
+                        return this.containsAll(s);
                     }
 
                     public int size() {
@@ -283,11 +335,20 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
                         }
                         return count;
                     }
+
                 };
             }
 
             public Comparator<? super K> comparator() {
                 return Treap.this.comparator();
+            }
+
+            public int size() { return this.entrySet().size(); }
+
+            public V get(Object key) {
+                K ele = (K)key;
+                if (!inRange(ele)) return null;
+                return Treap.this.get(key);
             }
 
             public V put(K key, V value) {
@@ -335,4 +396,17 @@ public class Treap<K,V> extends AbstractMap<K,V> implements SortedMap<K,V>, Xmla
     public Set<K> keySet() {throw new UnsupportedOperationException();}
     public Collection<V> values() {throw new UnsupportedOperationException();}
     public V remove(Object key) {throw new UnsupportedOperationException();}
+
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof SortedMap)) return false;
+        SortedMap sm = (SortedMap)o;
+        return this.entrySet().equals(sm.entrySet());
+    }
+
+
+    public int hashCode() {
+        return this.entrySet().hashCode();
+    }
+
 }
