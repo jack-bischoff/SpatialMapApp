@@ -12,8 +12,6 @@ import cmsc420.meeshquest.part2.VisualMap;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class CitySpatialMap {
@@ -139,6 +137,15 @@ public class CitySpatialMap {
     }
 
     public Response shortestPath(City start, City end) {
-        throw new NotImplementedException();
+        if (!graph.containsKey(start))
+            return new Response(true, Fault.nonExistentStart);
+        if (!graph.containsKey(end))
+            return new Response(true, Fault.nonExistentEnd);
+
+        AdjacencyList.Path path = graph.shortestPath(start, end);
+
+        if (path == null)
+            return new Response(true, Fault.noPathExists);
+        return new Response(path);
     }
 }
