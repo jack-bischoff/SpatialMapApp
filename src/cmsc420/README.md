@@ -1,7 +1,5 @@
-# MeeshQuest
-The Project for CMSC420
-Arno Bischoff
-bischoff
+A project simulating a map-like application using spatial data structures.
+For a college CS class. 
 
 Resources:
 Java Documentation
